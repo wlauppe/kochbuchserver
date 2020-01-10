@@ -1,11 +1,19 @@
 # kochbuchserver
 ## Installationsanleitung
 Intellij Community Edition downloaden 
+
+sudo mv Downloads/ideaIC-2019.3.1.tar.gz /opt/intellij/
+cd /opt/intellij/
+unp ideaIC-2019.3.1.tar.gz 
+
+
 dieses Repository öffnen. 
 
 ## Bauen auf der Kommandozeile
 
 ./gradlew build
+
+ausführen. 
 
 damit es läuft muss man noch die Datei 
 
