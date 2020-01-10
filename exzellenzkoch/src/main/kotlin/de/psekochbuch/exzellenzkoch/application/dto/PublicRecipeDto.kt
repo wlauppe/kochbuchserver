@@ -17,7 +17,7 @@ data class PublicRecipeDto(
 
         var preperationTime:Int,
 
-        val userId:String,
+        val userId:String?,
 
         var createtionDate:Date,
 
@@ -25,6 +25,8 @@ data class PublicRecipeDto(
 
         var ratingAvg:Int,
 
-        var ingredientsChapter: IngredientChapterDto
+        var ingredientsChapter: IngredientChapterDto,
+
+        var recipeTag:RecipeTagDto
 
 )

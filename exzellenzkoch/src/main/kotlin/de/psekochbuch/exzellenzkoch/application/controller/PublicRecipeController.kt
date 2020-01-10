@@ -16,8 +16,8 @@ class PublicRecipeController :PublicRecipeApi
         return service?.getRecipe(id)
     }
 
-    override fun addRecipe(publicRecipe: PublicRecipeDto) {
-        return service?.addRecipe(publicRecipe)
+    override fun addRecipe(publicRecipe: PublicRecipeDto?) {
+        service?.addRecipe(publicRecipe)
     }
 
 }
