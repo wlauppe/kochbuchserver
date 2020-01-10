@@ -16,9 +16,21 @@ dieses Repository öffnen.
 ausführen. 
 
 damit es läuft muss man noch die Datei 
+exzellenzkoch-firebase-adminsdk-35d6r-a48e2abb7e.json 
+
+in den buildordner kopiert werden. 
+diese liegt in 
+kochbuchserver/exzellenzkoch
+
+cd ~/kochbuchserver/exzellenzkoch/build/libs
+
+cp ../../exzellenzkoch-firebase-adminsdk-35d6r-a48e2abb7e.json .
+
+
 
 ## Server starten
 cd build/libs/
+
 java -jar exzellenzkoch-0.0.1-SNAPSHOT.jar 
 
 ## API Kommandozeile
