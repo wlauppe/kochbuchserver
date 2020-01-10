@@ -5,5 +5,5 @@ data class IngredientChapterDto(
 
         var name:String,
         
-        var ingredient:List<IngredientDto>
+        var ingredient:List<IngredientDto>?
 )

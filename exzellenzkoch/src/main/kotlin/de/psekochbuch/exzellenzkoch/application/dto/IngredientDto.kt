@@ -5,7 +5,7 @@ data class IngredientDto(
 
         var nameIngredient:String,
 
-        var amount:Double,
+        var amount:Int,
 
         var unit:String
 )

@@ -25,8 +25,8 @@ data class PublicRecipeDto(
 
         var ratingAvg:Int,
 
-        var ingredientsChapter: IngredientChapterDto,
+        var ingredientsChapter: List<IngredientChapterDto>?,
 
-        var recipeTag:RecipeTagDto
+        var recipeTag:List<RecipeTagDto>?
 
 )
