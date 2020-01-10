@@ -39,8 +39,8 @@ data class PublicRecipe(
         @ManyToOne(fetch = FetchType.LAZY, optional = false)
         @JoinColumn(name = "userId", nullable = false)
         @OnDelete(action = OnDeleteAction.CASCADE)
-        val user:User,
-        val userId:String,
+        val user:User?,
+
 
         @NotBlank
         var creationDate:Date,
@@ -52,6 +52,6 @@ data class PublicRecipe(
         var portions:Int,
 
        @ManyToMany(mappedBy = "favourites")
-        var userFav:List<User>
+        var userFav:List<User>?
         ) :Serializable
 {}

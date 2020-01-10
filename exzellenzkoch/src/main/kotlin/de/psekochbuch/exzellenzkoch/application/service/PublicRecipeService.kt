@@ -26,8 +26,18 @@ class PublicRecipeService
 
     }
 
-    fun addRecipe(publicRecipe: PublicRecipeDto) {
-
+    fun addRecipe(publicRecipe: PublicRecipeDto?) {
+        var userId:String;
+        if(publicRecipe?.userId == null)
+        {
+            return;
+        }
+        else
+        {
+            userId = publicRecipe.userId
+        }
+        val user = userDao?.findById(userId)?.get()
+        publicRecipeDao?.save(PublicRecipe(0, publicRecipe!!.title , publicRecipe?.ingredientsText, publicRecipe.preparationDescription,publicRecipe.picture, publicRecipe.cookingTime, publicRecipe.preperationTime, user, publicRecipe.createtionDate,false, publicRecipe.portions, null))
     }
 
     private fun convertRecipeToDto(recipe:PublicRecipe?) : PublicRecipeDto
@@ -39,7 +49,9 @@ class PublicRecipeService
         {
             recipe?.picture = "0".toByteArray(Charsets.UTF_8)
         }*/
-        return PublicRecipeDto(recipe!!.recipeId, recipe.title, recipe.ingredientsText, recipe.preparationDescription, recipe?.picture, recipe.cookingTime, recipe.preparationTime, recipe.userId, recipe.creationDate, recipe.portions, 0)
+        var recipeChapter = publicRecipeDao?.getChapterFromRecipe(recipe!!.recipeId)
+
+        return PublicRecipeDto(recipe!!.recipeId, recipe.title, recipe.ingredientsText, recipe.preparationDescription, recipe?.picture, recipe.cookingTime, recipe.preparationTime, recipe.user?.userId, recipe.creationDate, recipe.portions, 0, recipeChapter)
     }
 
     private fun convertDtoToRecipe(recipe:PublicRecipeDto)
