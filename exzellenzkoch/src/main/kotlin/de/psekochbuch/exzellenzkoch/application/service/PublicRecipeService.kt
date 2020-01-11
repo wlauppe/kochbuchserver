@@ -8,8 +8,7 @@ import de.psekochbuch.exzellenzkoch.domain.model.IngredientAmount
 import de.psekochbuch.exzellenzkoch.domain.model.IngredientChapter
 import de.psekochbuch.exzellenzkoch.domain.model.PublicRecipe
 import de.psekochbuch.exzellenzkoch.domain.model.RecipeTag
-import de.psekochbuch.exzellenzkoch.infrastructure.dao.PublicRecipeDao
-import de.psekochbuch.exzellenzkoch.infrastructure.dao.UserDao
+import de.psekochbuch.exzellenzkoch.infrastructure.dao.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 import org.springframework.stereotype.Service
@@ -24,6 +23,9 @@ class PublicRecipeService
 {
     @Autowired var publicRecipeDao:PublicRecipeDao? = null
     @Autowired var userDao:UserDao? = null
+    @Autowired var ingredientChapterDao:IngredientChapterDao? = null
+    @Autowired var ingredientAmountDao:IngredientDao? = null
+    @Autowired var recipeTagDao:RecipeTagDao? = null
 
     fun getRecipe(id:Int) : PublicRecipeDto
     {
@@ -55,35 +57,35 @@ class PublicRecipeService
         {
             recipe?.picture = "0".toByteArray(Charsets.UTF_8)
         }*/
-        var recipeChapter = publicRecipeDao?.getChapterFromRecipe(recipe!!.recipeId)
-        var recipeChapterDto = convertRecipeChapterToDto(recipeChapter)
+        val recipeChapter = ingredientChapterDao?.getChapterFromRecipe(recipe!!.recipeId)
+        val recipeChapterDto = convertRecipeChapterToDto(recipeChapter)
 
-        var recipeTagDto = convertRecipeTagsToDto(publicRecipeDao?.getRecipeTagsFromRecipe(recipe!!.recipeId))
+        val recipeTagDto = convertRecipeTagsToDto(recipeTagDao?.getRecipeTagsFromRecipe(recipe!!.recipeId))
 
-        return PublicRecipeDto(recipe!!.recipeId, recipe.title, recipe.ingredientsText, recipe.preparationDescription, recipe?.picture, recipe.cookingTime, recipe.preparationTime, recipe.user?.userId, recipe.creationDate, recipe.portions, 0, recipeChapterDto, recipeTagDto)
+        return PublicRecipeDto(recipe!!.recipeId, recipe.title, recipe.ingredientsText, recipe.preparationDescription, recipe.picture, recipe.cookingTime, recipe.preparationTime, recipe.user?.userId, recipe.creationDate, recipe.portions, 0, recipeChapterDto, recipeTagDto)
     }
 
-    private fun convertRecipeTagsToDto(recipeTags: List<RecipeTag>?): List<RecipeTagDto>? {
-        var convertedRecipeTags:MutableList<RecipeTagDto>? = null
+    private fun convertRecipeTagsToDto(recipeTags: List<RecipeTag>?): List<RecipeTagDto> {
+        val convertedRecipeTags:MutableList<RecipeTagDto> = ArrayList<RecipeTagDto>()
         recipeTags?.forEach{
-            convertedRecipeTags?.add(RecipeTagDto(it.tagId))
+            convertedRecipeTags.add(RecipeTagDto(it.tagId))
         }
         return convertedRecipeTags
     }
 
-    private fun convertRecipeChapterToDto(recipeChapters: List<IngredientChapter>?) : List<IngredientChapterDto>?{
-        var convertedChapters:MutableList<IngredientChapterDto>? = null
+    private fun convertRecipeChapterToDto(recipeChapters: List<IngredientChapter>?) : List<IngredientChapterDto>{
+        var convertedChapters:MutableList<IngredientChapterDto> = ArrayList<IngredientChapterDto>()
         recipeChapters?.forEach {
-            var convertedIngredients = convertChapterIngredientsToDto(publicRecipeDao?.getIngredientsFromChapter(it.chapterId))
-            convertedChapters?.add(IngredientChapterDto(it.chapterId,it.chapterName, convertedIngredients))
+            var convertedIngredients = convertChapterIngredientsToDto(ingredientAmountDao?.getIngredientsFromChapter(it.chapterId))
+            convertedChapters.add(IngredientChapterDto(it.chapterId,it.chapterName, convertedIngredients))
         }
         return convertedChapters
     }
 
-    private fun convertChapterIngredientsToDto(ingredientsFromChapter: List<IngredientAmount>?): List<IngredientDto>? {
-        var convertedIngredients:MutableList<IngredientDto>? = null
+    private fun convertChapterIngredientsToDto(ingredientsFromChapter: List<IngredientAmount>?): List<IngredientDto> {
+        var convertedIngredients:MutableList<IngredientDto> = ArrayList<IngredientDto>()
         ingredientsFromChapter?.forEach {
-            convertedIngredients?.add(IngredientDto(it.chapter.chapterId, it.nameIngredient, it.amount,it.unit))
+            convertedIngredients.add(IngredientDto(it.chapter.chapterId, it.nameIngredient, it.amount,it.unit))
         }
         return convertedIngredients
     }
