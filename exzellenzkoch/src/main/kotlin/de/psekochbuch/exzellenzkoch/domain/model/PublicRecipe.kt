@@ -11,7 +11,7 @@ import javax.persistence.*
 import javax.validation.constraints.NotBlank
 
 @Entity
-@Table(name= "publicRecipe")
+@Table(name= "public_Recipe")
 @EntityListeners(AuditingEntityListener::class)
 @JsonIgnoreProperties(allowGetters = true)
 data class PublicRecipe(
@@ -37,10 +37,10 @@ data class PublicRecipe(
         var preparationTime:Int,
 
         @ManyToOne(fetch = FetchType.LAZY, optional = false)
-        @JoinColumn(name = "userId", nullable = false)
+        @JoinColumn(name = "user_Id", nullable = false)
         @OnDelete(action = OnDeleteAction.CASCADE)
-        val user:User,
-        val userId:String,
+        val user:User?,
+
 
         @NotBlank
         var creationDate:Date,
@@ -52,6 +52,6 @@ data class PublicRecipe(
         var portions:Int,
 
        @ManyToMany(mappedBy = "favourites")
-        var userFav:List<User>
+        var userFav:List<User>?
         ) :Serializable
 {}

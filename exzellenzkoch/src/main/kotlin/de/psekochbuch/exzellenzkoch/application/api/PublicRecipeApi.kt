@@ -11,6 +11,6 @@ interface PublicRecipeApi {
     fun getRecipe(@PathVariable(value = "id") id:Int) : PublicRecipeDto?
 
     @PostMapping
-    fun addRecipe(@Valid @RequestBody publicRecipe:PublicRecipeDto)
+    fun addRecipe(@Valid @RequestBody publicRecipe:PublicRecipeDto?)
 
 }

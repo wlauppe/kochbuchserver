@@ -2,6 +2,7 @@ package de.psekochbuch.exzellenzkoch.domain.model
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import org.springframework.data.jpa.domain.support.AuditingEntityListener
+import java.io.Serializable
 import javax.persistence.*
 
 @Entity
@@ -14,8 +15,8 @@ data class User(
 
         var description:String,
 
-        @ManyToMany(mappedBy = "members")
-        var groups:List<Group>,
+       //@ManyToMany(cascade = [ CascadeType.ALL ], mappedBy = "members", targetEntity = Group::class)
+       //var groups:List<Group>?,
 
         @ManyToMany(cascade = [ CascadeType.ALL ])
         @JoinTable(
@@ -26,4 +27,6 @@ data class User(
         var favourites:List<PublicRecipe>,
 
         var markAsEvil:Boolean
-)
+
+
+) :Serializable
