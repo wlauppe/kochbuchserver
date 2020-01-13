@@ -14,7 +14,7 @@ data class IngredientChapter(
         val chapterId:Int,
 
         @ManyToOne(fetch = FetchType.LAZY, optional = false)
-        @JoinColumn(name = "recipeId", nullable = false)
+        @JoinColumn(name = "recipe_Id", nullable = false)
         @OnDelete(action = OnDeleteAction.CASCADE)
         val recipe:PublicRecipe?,
 

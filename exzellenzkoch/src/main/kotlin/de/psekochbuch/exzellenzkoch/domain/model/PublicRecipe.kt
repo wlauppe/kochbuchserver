@@ -15,8 +15,11 @@ import javax.validation.constraints.NotBlank
 @EntityListeners(AuditingEntityListener::class)
 @JsonIgnoreProperties(allowGetters = true)
 data class PublicRecipe(
+
         @Id
-        val recipeId :Int,
+        //@Column(name = "recipe_Id")
+        //@GeneratedValue(strategy = GenerationType.AUTO)
+        var recipeId :Int,
 
         @NotBlank
         var title:String,
