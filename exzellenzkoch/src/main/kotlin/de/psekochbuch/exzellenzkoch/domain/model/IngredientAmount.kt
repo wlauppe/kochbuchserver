@@ -15,7 +15,7 @@ data class IngredientAmount(
         @ManyToOne(fetch = FetchType.LAZY, optional = false)
         @JoinColumn(name = "chapterId", nullable = false)
         @OnDelete(action = OnDeleteAction.CASCADE)
-        val chapter: IngredientChapter,
+        val chapter: IngredientChapter?,
 
         @Id
         @NotBlank
