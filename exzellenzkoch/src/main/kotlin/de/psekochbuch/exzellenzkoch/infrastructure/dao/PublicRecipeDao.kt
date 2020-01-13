@@ -4,10 +4,14 @@ import de.psekochbuch.exzellenzkoch.domain.model.IngredientAmount
 import de.psekochbuch.exzellenzkoch.domain.model.IngredientChapter
 import de.psekochbuch.exzellenzkoch.domain.model.PublicRecipe
 import de.psekochbuch.exzellenzkoch.domain.model.RecipeTag
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
+import org.springframework.data.repository.CrudRepository
 import org.springframework.data.repository.query.Param
 import org.springframework.stereotype.Repository
+import java.util.*
+import javax.persistence.EntityManager
 
 @Repository
 interface PublicRecipeDao : JpaRepository<PublicRecipe?, Int?>
@@ -20,6 +24,13 @@ interface PublicRecipeDao : JpaRepository<PublicRecipe?, Int?>
 
     @Query("SELECT p FROM recipe_tag p WHERE recipe_Id = (:id)", nativeQuery = true)
     fun getRecipeTagsFromRecipe(id:Int): List<RecipeTag>
+
+    @Query("INSERT INTO public_recipe (title, ingredients_Text, preparation_Description, picture, cooking_Time, preparation_Time, user_Id, creation_Date, portions, mark_As_Evil) VALUES ((:title), (:ingr_Text), (:prep_Desc), (:pic), (:cook_T), (:prep_T), (:user), (:cre_D), (:port), 0)", nativeQuery = true)
+    fun addRecipe(title:String, ingr_Text:String, prep_Desc:String, pic:ByteArray, cook_T:Int, prep_T:Int, user:String, cre_D: Date, port:Int)
+
+
+    @Query("SELECT LAST_INSERT_ID()", nativeQuery = true)
+    fun getLastId(): Int
 
     //@Query("SELECT p FROM publicRecipe p where recipe_id =(:id)", nativeQuery = true)
     //fun getRecipe(@Param("id") id:Int) :List<PublicRecipe>
