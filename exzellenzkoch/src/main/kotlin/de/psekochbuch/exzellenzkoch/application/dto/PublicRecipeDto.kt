@@ -15,11 +15,11 @@ data class PublicRecipeDto(
 
         var cookingTime:Int,
 
-        var preperationTime:Int,
+        var preparationTime:Int,
 
         val userId:String?,
 
-        var createtionDate:Date,
+        var creationDate:Date,
 
         var portions:Int,
 
