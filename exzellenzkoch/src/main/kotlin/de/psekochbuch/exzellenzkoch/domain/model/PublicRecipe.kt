@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import org.hibernate.annotations.OnDelete
 import org.hibernate.annotations.OnDeleteAction
 import org.springframework.data.jpa.domain.support.AuditingEntityListener
-import java.awt.image.BufferedImage
 import java.io.Serializable
 import java.util.*
 import javax.persistence.*
