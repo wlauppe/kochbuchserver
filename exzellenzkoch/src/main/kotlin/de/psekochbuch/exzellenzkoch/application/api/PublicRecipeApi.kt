@@ -10,7 +10,7 @@ interface PublicRecipeApi {
     @GetMapping("/{id}")
     fun getRecipe(@PathVariable(value = "id") id:Int) : PublicRecipeDto?
 
-    @PostMapping
+    @PostMapping ("")
     fun addRecipe(@Valid @RequestBody publicRecipe:PublicRecipeDto?)
 
 }
