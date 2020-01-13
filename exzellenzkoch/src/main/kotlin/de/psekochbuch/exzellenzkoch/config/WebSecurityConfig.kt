@@ -39,6 +39,7 @@ class WebSecurityConfig : WebSecurityConfigurerAdapter() {
     override fun configure(web: WebSecurity?) {
         super.configure(web)
         web?.ignoring()?.antMatchers("/api/recipes/{id}")
+        web?.ignoring()?.antMatchers("/api/recipes")
     }
 
     @Bean
