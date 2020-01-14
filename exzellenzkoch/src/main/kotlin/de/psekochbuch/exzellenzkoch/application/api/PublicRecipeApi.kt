@@ -13,6 +13,9 @@ interface PublicRecipeApi {
     @PostMapping ("")
     fun addRecipe(@Valid @RequestBody publicRecipe:PublicRecipeDto?)
 
+    @PutMapping ("/{id}")
+    fun updateRecipe(@Valid @RequestBody publicRecipe: PublicRecipeDto?, @PathVariable id:Int)
+
     @DeleteMapping ("/{id}")
     fun deleteRecipe(@PathVariable(value = "id") id:Int)
 

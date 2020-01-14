@@ -68,4 +68,22 @@ class PublicRecipeService
             publicRecipeDao?.delete(publicRecipe)
         }
     }
+
+    fun updateRecipe(publicRecipe: PublicRecipeDto?, id: Int) {
+        publicRecipeDao?.findById(id)?.map {
+            it?.title = publicRecipe!!.title
+            it?.ingredientsText = publicRecipe.ingredientsText
+            it?.preparationDescription = publicRecipe.preparationDescription
+            it?.picture = publicRecipe.picture
+            it?.cookingTime = publicRecipe.cookingTime
+            it?.preparationTime = publicRecipe.preparationTime
+            it?.portions = publicRecipe.portions
+            if (it != null) publicRecipeDao?.save(it)
+        }
+        publicRecipe?.ingredientsChapter?.forEach {
+            ingredientChapterDao?.findById(it.id)?.map { chapter ->
+                chapter.chapterName
+            }
+        }
+    }
 }

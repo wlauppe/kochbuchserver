@@ -24,6 +24,10 @@ class PublicRecipeController :PublicRecipeApi
         service?.addRecipe(publicRecipe)
     }
 
+    override fun updateRecipe(publicRecipe: PublicRecipeDto?, id: Int) {
+        service?.updateRecipe(publicRecipe, id)
+    }
+
     override fun deleteRecipe(id: Int) {
         service?.deleteRecipe(id)
     }
