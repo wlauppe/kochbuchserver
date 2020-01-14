@@ -44,6 +44,10 @@ class PublicRecipeService
                 ingredientAmountDao?.flush()
             }
         }
+
+        publicRecipe.recipeTag?.forEach{
+            recipeTagDao?.addRecipeTag(it.name ,recipeId)
+        }
     }
 
     fun deleteRecipe(id: Int) {
@@ -64,5 +68,4 @@ class PublicRecipeService
             publicRecipeDao?.delete(publicRecipe)
         }
     }
-
 }
