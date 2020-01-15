@@ -14,4 +14,7 @@ interface IngredientChapterDao : JpaRepository<IngredientChapter,Int>
 
     @Query("SELECT LAST_INSERT_ID()", nativeQuery = true)
     fun getLastId(): Int
+
+    @Query("SELECT chapter_id FROM ingredient_chapter WHERE recipe_id = (:recipeId)", nativeQuery = true)
+    fun getChapterIdsFromRecipe(recipeId: Int) : List<Int>
 }

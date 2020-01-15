@@ -11,4 +11,7 @@ interface IngredientDao :JpaRepository<IngredientAmount,Int>
 
     @Query("SELECT * FROM ingredient_amount p WHERE chapter_id = (:id)", nativeQuery = true)
     fun getIngredientsFromChapter(id:Int) : List<IngredientAmount>
+
+    @Query("DELETE FROM ingredient_amount WHERE chapter_id = (:id)", nativeQuery = true)
+    fun deleteIngredientsFromChapter(id:Int)
 }

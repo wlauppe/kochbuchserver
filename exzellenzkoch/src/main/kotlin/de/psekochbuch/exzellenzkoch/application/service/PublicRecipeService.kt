@@ -8,7 +8,11 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.util.*
 
+/**
+ * Class for management of public recipes
+ */
 @Service
 //@Component
 @Transactional
@@ -34,16 +38,7 @@ class PublicRecipeService
 
         val recipeId = publicRecipeDao?.getLastId() ?: return
 
-        publicRecipe.ingredientsChapter?.forEach { chapter ->
-
-            ingredientChapterDao?.addChapter(recipeId,chapter.name)
-            ingredientChapterDao?.flush()
-            val chapterId = ingredientChapterDao?.getLastId() ?: return
-            chapter.ingredient?.forEach{
-                ingredientAmountDao?.addIngredient(chapterId, it.nameIngredient,it.amount, it.unit)
-                ingredientAmountDao?.flush()
-            }
-        }
+        createChapterWithIngredients(publicRecipe, recipeId)
 
         publicRecipe.recipeTag?.forEach{
             recipeTagDao?.addRecipeTag(it.name ,recipeId)
@@ -53,19 +48,14 @@ class PublicRecipeService
     fun deleteRecipe(id: Int) {
         val publicRecipe = publicRecipeDao?.findById(id)?.get()
         val auth : FirebaseAuthentication = SecurityContextHolder.getContext().authentication as FirebaseAuthentication
-        if(auth.principal == publicRecipe?.recipeId)
+        if(auth.principal == publicRecipe?.user?.userId)
         {
-            ingredientChapterDao?.getChapterFromRecipe(id)?.forEach { chapter ->
+            deleteChapterWithIngredients(id)
 
-                ingredientAmountDao?.getIngredientsFromChapter(chapter.chapterId)?.forEach {
-                    ingredientAmountDao?.delete(it)
-                }
-                ingredientChapterDao?.delete(chapter)
-            }
             recipeTagDao?.getRecipeTagsFromRecipe(id)?.forEach {
                 recipeTagDao?.delete(it)
             }
-            publicRecipeDao?.delete(publicRecipe)
+            publicRecipeDao?.deleteById(id)
         }
     }
 
@@ -80,10 +70,39 @@ class PublicRecipeService
             it?.portions = publicRecipe.portions
             if (it != null) publicRecipeDao?.save(it)
         }
-        publicRecipe?.ingredientsChapter?.forEach {
-            ingredientChapterDao?.findById(it.id)?.map { chapter ->
-                chapter.chapterName
+
+        deleteChapterWithIngredients(publicRecipe!!.id)
+        createChapterWithIngredients(publicRecipe, id)
+
+
+    }
+
+    fun search(title:String, tags:List<String>, ingredients:List<String>,
+               creationDate: Date, alreadyLoad:Int, readCount:Int)
+    {
+        //publicRecipeDao.search()
+    }
+
+    private fun createChapterWithIngredients(publicRecipe: PublicRecipeDto, recipeId: Int)
+    {
+        publicRecipe.ingredientsChapter?.forEach { chapter ->
+
+            ingredientChapterDao?.addChapter(recipeId,chapter.name)
+            ingredientChapterDao?.flush()
+            val chapterId = ingredientChapterDao?.getLastId() ?: return
+            chapter.ingredient?.forEach{
+                ingredientAmountDao?.addIngredient(chapterId, it.nameIngredient,it.amount, it.unit)
+                ingredientAmountDao?.flush()
             }
         }
+    }
+
+    private fun deleteChapterWithIngredients(recipeId:Int)
+    {
+        ingredientChapterDao?.getChapterIdsFromRecipe(recipeId)?.forEach{
+            ingredientAmountDao?.deleteIngredientsFromChapter(it)
+            ingredientChapterDao?.deleteById(it)
+        }
+
     }
 }
