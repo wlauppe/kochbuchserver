@@ -4,6 +4,8 @@ import de.psekochbuch.exzellenzkoch.domain.model.IngredientAmount
 import de.psekochbuch.exzellenzkoch.domain.model.IngredientChapter
 import de.psekochbuch.exzellenzkoch.domain.model.PublicRecipe
 import de.psekochbuch.exzellenzkoch.domain.model.RecipeTag
+import de.psekochbuch.exzellenzkoch.infrastructure.dao.custom.PublicRecipeRepository
+import de.psekochbuch.exzellenzkoch.infrastructure.dao.custom.PublicRecipeRepositoryImpl
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.query.Param
@@ -14,7 +16,7 @@ import javax.persistence.criteria.Root
 
 
 @Repository
-interface PublicRecipeDao : JpaRepository<PublicRecipe?, Int?>
+interface PublicRecipeDao : JpaRepository<PublicRecipe?, Int?>, PublicRecipeRepository
 {
     @Query("SELECT new de.psekochbuch.exzellenzkoch.domain.model.IngredientChapter(t.chapter_Id, null, t.chapter_Name) FROM ingredient_chapter u WHERE u.recipe_Id = 1", nativeQuery = true)
     fun getChapterFromRecipe(id:Int): List<IngredientChapter>
@@ -39,24 +41,4 @@ interface PublicRecipeDao : JpaRepository<PublicRecipe?, Int?>
 
     //@Query("SELECT p FROM publicRecipe p where recipe_id =(:id)", nativeQuery = true)
     //fun getRecipe(@Param("id") id:Int) :List<PublicRecipe>
-}
-
-class UserRepositoryCustomImpl : UserRepositoryCustom {
-    @PersistenceContext
-    private val entityManager: EntityManager? = null
-
-    fun findUserByEmails(emails: Set<String?>): List<User> {
-        val cb = entityManager!!.criteriaBuilder
-        val query: CriteriaQuery<User> = cb.createQuery(User::class.java)
-        val user: Root<User> = query.from(User::class.java)
-        val emailPath: Path<String> = user.get<Any>("email")
-        val predicates: MutableList<Predicate> = ArrayList<Predicate>()
-        for (email in emails) {
-            predicates.add(cb.like(emailPath, email))
-        }
-        query.select(user)
-                .where(cb.or(predicates.toArray(arrayOfNulls<Predicate>(predicates.size))))
-        return entityManager.createQuery<Any>(query)
-                .resultList
-    }
 }

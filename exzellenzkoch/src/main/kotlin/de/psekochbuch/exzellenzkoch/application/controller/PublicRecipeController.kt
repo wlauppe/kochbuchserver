@@ -32,4 +32,9 @@ class PublicRecipeController :PublicRecipeApi
         service?.deleteRecipe(id)
     }
 
+    override fun search(title: Optional<String>) {
+        val t = "d"
+        //service?.search(title, )
+    }
+
 }

@@ -26,6 +26,8 @@ class PublicRecipeService
 
     fun getRecipe(id:Int) : PublicRecipeDto
     {
+        val recipes =  publicRecipeDao?.search("%Wind%", null, null, null, 1, 10)
+
         val recipe = publicRecipeDao?.findById(id)
         return RecipeConverter.convertRecipeToDto(recipe?.get(), ingredientChapterDao, recipeTagDao, ingredientAmountDao)
     }
