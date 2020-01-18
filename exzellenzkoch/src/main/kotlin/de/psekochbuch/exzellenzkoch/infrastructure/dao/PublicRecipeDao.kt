@@ -34,11 +34,6 @@ interface PublicRecipeDao : JpaRepository<PublicRecipe?, Int?>, PublicRecipeRepo
     @Query("SELECT LAST_INSERT_ID()", nativeQuery = true)
     fun getLastId(): Int
 
-    @Query(":query", nativeQuery = true)
-    fun search(@Param ("query") query:Any): List<PublicRecipe>
-
-
-
-    //@Query("SELECT p FROM publicRecipe p where recipe_id =(:id)", nativeQuery = true)
-    //fun getRecipe(@Param("id") id:Int) :List<PublicRecipe>
+    @Query("UPDATE public_recipe SET mark_as_Evil = 1 WHERE recipe_id = (:id)", nativeQuery = true)
+    fun reportRecipe(id: Int)
 }

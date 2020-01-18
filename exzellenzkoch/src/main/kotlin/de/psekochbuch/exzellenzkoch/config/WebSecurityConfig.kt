@@ -40,6 +40,7 @@ class WebSecurityConfig : WebSecurityConfigurerAdapter() {
         super.configure(web)
         web?.ignoring()?.antMatchers("/api/recipes/{id}")
         web?.ignoring()?.antMatchers("/api/recipes")
+        web?.ignoring()?.antMatchers("/api/recipes/report/{id}")
 
     }
 

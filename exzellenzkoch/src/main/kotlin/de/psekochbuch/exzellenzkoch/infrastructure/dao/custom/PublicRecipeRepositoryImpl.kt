@@ -10,6 +10,16 @@ class PublicRecipeRepositoryImpl : PublicRecipeRepository
     @PersistenceContext
     private val entityManager: EntityManager? = null
 
+    /**
+     * Search in the database after recipes with specific title, tags, ingredients and creationdate
+     * create an sql-command for the search
+     * @param title The title which should search
+     * @param tags The tags from the recipes
+     * @param ingredients The ingredients from the recipes
+     * @param pageNumber The page of the already loaded recipes
+     * @param count Count of the to loaded recipes
+     * @return the loaded recipes
+     */
     override fun search(title: String?, tags: List<String>?, ingredients: List<String>?, creationDate: Date?, pageNumber:Int, count:Int) : MutableList<Any?>? {
         var query:String = "SELECT p.recipe_id, title, ingredients_Text, preparation_Description, picture, cooking_Time, preparation_Time, user_Id, creation_Date, portions, mark_As_Evil " +
                 "FROM public_recipe p LEFT JOIN ingredient_chapter c ON p.recipe_Id = c.recipe_Id " +

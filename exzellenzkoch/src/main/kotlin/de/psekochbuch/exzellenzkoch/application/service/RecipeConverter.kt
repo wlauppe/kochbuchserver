@@ -13,10 +13,19 @@ import de.psekochbuch.exzellenzkoch.infrastructure.dao.IngredientDao
 import de.psekochbuch.exzellenzkoch.infrastructure.dao.RecipeTagDao
 import de.psekochbuch.exzellenzkoch.infrastructure.dao.UserDao
 
+/**
+ * This class convert DTOs to modelobjects and modelobjects to DTOs
+ */
 object RecipeConverter
 {
-
-
+    /**
+     * Convert public recipes to DTO
+     * @param recipe The recipe, which should convert
+     * @param ingredientChapterDao Database Access Object of ingredientchapters
+     * @param recipeTagDao Database Access Object of recipetags
+     * @param ingredientAmountDao Database Access Object of ingredients
+     * @return The converted PublicRecipeDto
+     */
     fun convertRecipeToDto(recipe: PublicRecipe?,  ingredientChapterDao:IngredientChapterDao?, recipeTagDao: RecipeTagDao?, ingredientAmountDao:IngredientDao?) : PublicRecipeDto
     {
         //var bao:ByteArrayOutputStream = ByteArrayOutputStream()
@@ -34,6 +43,11 @@ object RecipeConverter
         return PublicRecipeDto(recipe!!.recipeId, recipe.title, recipe.ingredientsText, recipe.preparationDescription, recipe.picture, recipe.cookingTime, recipe.preparationTime, recipe.user?.userId, recipe.creationDate, recipe.portions, 0, recipeChapterDto, recipeTagDto)
     }
 
+    /**
+     * Convert recipe tags to DTOs
+     * @param recipeTags Tags of the recipe
+     * @return The converted recipes tags
+     */
     private fun convertRecipeTagsToDto(recipeTags: List<RecipeTag>?): List<RecipeTagDto> {
         val convertedRecipeTags:MutableList<RecipeTagDto> = ArrayList<RecipeTagDto>()
         recipeTags?.forEach{
@@ -42,6 +56,12 @@ object RecipeConverter
         return convertedRecipeTags
     }
 
+    /**
+     * Convert ingredientchapters to DTOs
+     * @param recipeChapters chapters, which should convert
+     * @param ingredientAmountDao Database Access Object of ingredients
+     * @return List of converted ingredientchapters
+     */
     private fun convertRecipeChapterToDto(recipeChapters: List<IngredientChapter>?, ingredientAmountDao: IngredientDao?) : List<IngredientChapterDto>{
         val convertedChapters:MutableList<IngredientChapterDto> = ArrayList<IngredientChapterDto>()
         recipeChapters?.forEach {
@@ -51,6 +71,11 @@ object RecipeConverter
         return convertedChapters
     }
 
+    /**
+     * Convert ingredients from chapters to DTOs
+     * @param ingredientsFromChapter List of ingredients
+     * @return List of converted ingredients
+     */
     private fun convertChapterIngredientsToDto(ingredientsFromChapter: List<IngredientAmount>?): List<IngredientDto> {
         val convertedIngredients:MutableList<IngredientDto> = ArrayList<IngredientDto>()
         ingredientsFromChapter?.forEach {
