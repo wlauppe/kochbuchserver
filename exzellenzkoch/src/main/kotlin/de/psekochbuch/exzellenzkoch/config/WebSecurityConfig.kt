@@ -17,6 +17,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 
+/**
+ * Class enables security and sets configs
+ */
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
@@ -44,6 +47,9 @@ class WebSecurityConfig : WebSecurityConfigurerAdapter() {
 
     }
 
+    /**
+     * Return the password encoder
+     */
     @Bean
     fun passwordEncoder(): PasswordEncoder {
         return BCryptPasswordEncoder()
@@ -55,12 +61,12 @@ class WebSecurityConfig : WebSecurityConfigurerAdapter() {
           return super.authenticationManagerBean()
       }*/
 
+
     @Throws(Exception::class)
-    override fun configure(httpSecurity: HttpSecurity) { // We don't need CSRF for this example
-        httpSecurity.csrf().disable() // dont authenticate this particular request
-                .authorizeRequests().antMatchers("/authenticate").permitAll().anyRequest() // all other requests need to be authenticated
-                .authenticated().and().exceptionHandling() // make sure we use stateless session; session won't be used to
-// store user's state.
+    override fun configure(httpSecurity: HttpSecurity) {
+        httpSecurity.csrf().disable()
+                .authorizeRequests().antMatchers("/authenticate").permitAll().anyRequest()
+                .authenticated().and().exceptionHandling()
                 .authenticationEntryPoint(jwtAuthenticationEntryPoint).and().sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
         // Add a filter to validate the tokens with every request

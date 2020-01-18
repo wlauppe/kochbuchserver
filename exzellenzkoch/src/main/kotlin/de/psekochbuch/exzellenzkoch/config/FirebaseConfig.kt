@@ -11,9 +11,15 @@ import org.springframework.context.annotation.Configuration
 import java.io.File
 import javax.annotation.PostConstruct
 
+/**
+ * Class for the firebase initialisation
+ */
 @Configuration
 class FirebaseConfig {
 
+    /**
+     * Set Firebasedatabase instance
+     */
     @Bean
     fun firebaseDatabse(): DatabaseReference {
         return FirebaseDatabase.getInstance().reference
@@ -25,15 +31,12 @@ class FirebaseConfig {
     @Value("\${de.psekochbuch.exzellenzkoch.firebase.config.path}")
     private val configPath: String? = null
 
+    /**
+     * Load Firebaseconfig JSON to add the function to authenticate with Firebase
+     */
     @PostConstruct
     fun init() {
-        /**
-         * https://firebase.google.com/docs/server/setup
-         *
-         * Create service account , download json
-         */
-        var file = File(configPath)
-        val inputStream = file.inputStream()
+        val inputStream = File(configPath).inputStream()
         val google = GoogleCredentials.fromStream(inputStream)
         val options: FirebaseOptions = FirebaseOptions.Builder().setCredentials(google).setDatabaseUrl(databaseUrl).build()
         FirebaseApp.initializeApp(options)

@@ -8,22 +8,37 @@ import java.io.Serializable
 import javax.persistence.*
 import javax.validation.constraints.NotBlank
 
+/**
+ * Dataclass for Groups
+ */
 @Entity
 @Table(name= "group")
 @EntityListeners(AuditingEntityListener::class)
 @JsonIgnoreProperties(allowGetters = true)
 data class Group(
+        /**
+         * The id of the group
+         */
         @Id
         val groupId:Int,
 
+        /**
+         * The creator of this group
+         */
         @ManyToOne(fetch = FetchType.LAZY, optional = false)
         @JoinColumn(name = "mainUser", nullable = false)
         @OnDelete(action = OnDeleteAction.CASCADE)
         val mainUser:User,
 
+        /**
+         * The name of the group
+         */
         @NotBlank
         var name:String,
 
+        /**
+         * The list of user, where are in the group
+         */
         @ManyToMany(targetEntity = User::class ,cascade = [ CascadeType.ALL ])
         @JoinTable(
                 name = "user_group",
@@ -32,6 +47,9 @@ data class Group(
         )
         var members:List<User>?,
 
+        /**
+         * If the group is reported then the variable is true
+         */
         @NotBlank
         var markAsEvil:Boolean
 

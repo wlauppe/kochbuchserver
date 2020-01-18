@@ -14,12 +14,12 @@ import de.psekochbuch.exzellenzkoch.infrastructure.dao.RecipeTagDao
 import de.psekochbuch.exzellenzkoch.infrastructure.dao.UserDao
 
 /**
- * This class convert DTOs to modelobjects and modelobjects to DTOs
+ * This class converts DTOs to modelobjects and modelobjects to DTOs
  */
 object RecipeConverter
 {
     /**
-     * Convert public recipes to DTO
+     * Converts public recipes to DTO
      * @param recipe The recipe, which should convert
      * @param ingredientChapterDao Database Access Object of ingredientchapters
      * @param recipeTagDao Database Access Object of recipetags
@@ -44,7 +44,7 @@ object RecipeConverter
     }
 
     /**
-     * Convert recipe tags to DTOs
+     * Converts recipe tags to DTOs
      * @param recipeTags Tags of the recipe
      * @return The converted recipes tags
      */
@@ -57,7 +57,7 @@ object RecipeConverter
     }
 
     /**
-     * Convert ingredientchapters to DTOs
+     * Converts ingredientchapters to DTOs
      * @param recipeChapters chapters, which should convert
      * @param ingredientAmountDao Database Access Object of ingredients
      * @return List of converted ingredientchapters
@@ -72,7 +72,7 @@ object RecipeConverter
     }
 
     /**
-     * Convert ingredients from chapters to DTOs
+     * Converts ingredients from chapters to DTOs
      * @param ingredientsFromChapter List of ingredients
      * @return List of converted ingredients
      */
@@ -84,6 +84,10 @@ object RecipeConverter
         return convertedIngredients
     }
 
+    /**
+     * Converts public recipes to DTOs
+     * @param
+     */
     fun convertDtoToRecipe(recipe:PublicRecipeDto, userDao: UserDao) : PublicRecipe?
     {
         val userId:String;
