@@ -8,6 +8,7 @@ import javax.validation.constraints.NotBlank
 
 /**
  * Dataclass for ingredientchapter
+ * It represent the table in the database
  */
 @Entity
 @Table(name= "ingredientChapter")

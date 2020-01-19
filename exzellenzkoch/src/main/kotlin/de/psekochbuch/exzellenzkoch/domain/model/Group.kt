@@ -10,6 +10,7 @@ import javax.validation.constraints.NotBlank
 
 /**
  * Dataclass for Groups
+ * It represent the table in the database
  */
 @Entity
 @Table(name= "group")

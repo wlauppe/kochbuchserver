@@ -7,6 +7,7 @@ import javax.persistence.*
 
 /**
  * Dataclass of the private recipe tags
+ * It represent the table in the database
  */
 @Entity
 @Table(name= "privateRecipeTag")

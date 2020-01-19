@@ -8,6 +8,7 @@ import javax.persistence.*
 
 /**
  * Dataclass for comments
+ * It represent the table in the database
  */
 @Entity
 @Table(name= "comment")
