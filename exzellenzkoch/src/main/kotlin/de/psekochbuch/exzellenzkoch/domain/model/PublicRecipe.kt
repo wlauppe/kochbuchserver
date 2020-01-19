@@ -70,7 +70,7 @@ data class PublicRecipe(
         val user:User?,
 
         /**
-         * Date when the recipe is created
+         * Date when the recipe was created
          */
         @NotBlank
         var creationDate:Date,

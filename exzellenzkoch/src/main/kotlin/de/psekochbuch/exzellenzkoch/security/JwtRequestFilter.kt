@@ -15,6 +15,9 @@ import javax.servlet.ServletException
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
+/**
+ *Checks user who call the API and authorized them
+ */
 @Component
 class JwtRequestFilter : OncePerRequestFilter() {
 
@@ -23,10 +26,8 @@ class JwtRequestFilter : OncePerRequestFilter() {
         val requestTokenHeader = request.getHeader("Authorization")
         var username: String? = null
         var jwtToken: String?
-        // JWT Token is in the form "Bearer token". Remove Bearer word and get
-// only the Token
-        if (requestTokenHeader != null ) { //&& requestTokenHeader.startsWith("Bearer ")
-            // jwtToken = requestTokenHeader.substring(7)
+
+        if (requestTokenHeader != null ) {
 
             val auth : FirebaseAuth = FirebaseAuth.getInstance()
             var apiDecodedToken: ApiFuture<FirebaseToken> = auth.verifyIdTokenAsync(requestTokenHeader)
