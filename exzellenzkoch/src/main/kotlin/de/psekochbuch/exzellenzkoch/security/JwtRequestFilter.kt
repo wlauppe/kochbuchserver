@@ -24,16 +24,17 @@ class JwtRequestFilter : OncePerRequestFilter() {
     @Throws(ServletException::class, IOException::class)
     override fun doFilterInternal(request: HttpServletRequest, response: HttpServletResponse, chain: FilterChain) {
         val requestTokenHeader = request.getHeader("Authorization")
-        var username: String? = null
-        var jwtToken: String?
+
+        val url = request.method
+        request.requestURI
 
         if (requestTokenHeader != null ) {
 
             val auth : FirebaseAuth = FirebaseAuth.getInstance()
-            var apiDecodedToken: ApiFuture<FirebaseToken> = auth.verifyIdTokenAsync(requestTokenHeader)
+            val apiDecodedToken: ApiFuture<FirebaseToken> = auth.verifyIdTokenAsync(requestTokenHeader)
             while(!apiDecodedToken.isDone){}
 
-            var decodedToken = apiDecodedToken.get()
+            val decodedToken = apiDecodedToken.get()
 
             val isvalidate = auth.getUserAsync(decodedToken.uid)
 
@@ -47,5 +48,9 @@ class JwtRequestFilter : OncePerRequestFilter() {
             }
         }
         chain.doFilter(request, response)
+    }
+
+    private fun checkIsAuth(decodedToken:ApiFuture<FirebaseToken>, uri:String){
+        //if(uri.matches("/api/users*"))
     }
 }
