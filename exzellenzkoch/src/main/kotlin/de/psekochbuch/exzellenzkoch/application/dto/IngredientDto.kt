@@ -17,7 +17,7 @@ data class IngredientDto(
         /**
          * Amount of the ingredient
          */
-        var amount:Int,
+        var amount:Double,
 
         /**
          * Unit of the ingredient

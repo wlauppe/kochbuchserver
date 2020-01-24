@@ -17,7 +17,7 @@ interface IngredientDao :JpaRepository<IngredientAmount,Int>
      * @param unit Unit of the amount
      */
     @Query ("INSERT INTO ingredient_amount (chapter_Id, name_Ingredient, amount, unit) VALUES ((:chapter), (:nameIng), (:amount), (:unit));", nativeQuery = true)
-    fun addIngredient(chapter:Int, nameIng:String, amount:Int, unit:String)
+    fun addIngredient(chapter:Int, nameIng:String, amount:Double, unit:String)
 
     /**
      * Load ingredients from a chapter

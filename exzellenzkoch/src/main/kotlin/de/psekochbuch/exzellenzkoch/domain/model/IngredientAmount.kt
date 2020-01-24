@@ -33,7 +33,7 @@ data class IngredientAmount(
         /**
          * The amount of the ingredient
          */
-        var amount:Int,
+        var amount:Double,
 
         /**
          * The unit of the amount from the ingredient
