@@ -43,7 +43,7 @@ class JwtRequestFilter : OncePerRequestFilter() {
             val user = isvalidate.get()
 
             if (decodedToken?.uid != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-                var authenticationToken: Authentication = FirebaseAuthentication(decodedToken?.uid, FirebaseTokenHolder(decodedToken), null)
+                val authenticationToken: Authentication = FirebaseAuthentication(decodedToken.uid, FirebaseTokenHolder(decodedToken), null)
                 SecurityContextHolder.getContext().setAuthentication(authenticationToken)
             }
         }
