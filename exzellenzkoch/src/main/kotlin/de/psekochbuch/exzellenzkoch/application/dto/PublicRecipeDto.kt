@@ -29,7 +29,7 @@ data class PublicRecipeDto(
         /**
          * Picture of the Recipe
          */
-        var picture:ByteArray,
+        var picture:String,
 
         /**
          * Cookingtime of the recipe

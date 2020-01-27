@@ -46,8 +46,7 @@ data class PublicRecipe(
         /**
          * Picture of the meal
          */
-        @Column(columnDefinition = "BLOB")
-        var picture: ByteArray,
+        var picture: String,
 
         /**
          * Time to cook a meal
