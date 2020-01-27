@@ -22,6 +22,7 @@ configurations {
 buildscript {
 	repositories {
 		mavenCentral()
+
 	}
 	dependencies {
 		classpath("org.springframework.boot:spring-boot-gradle-plugin:2.2.2.RELEASE")
@@ -56,6 +57,9 @@ dependencies {
 
 	//MariaDb
 	implementation ("org.mariadb.jdbc:mariadb-java-client:2.5.2")
+
+	implementation("commons-io:commons-io:2.6")
+
 }
 
 springBoot {
