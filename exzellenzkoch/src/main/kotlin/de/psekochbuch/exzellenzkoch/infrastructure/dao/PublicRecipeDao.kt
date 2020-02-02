@@ -33,7 +33,7 @@ interface PublicRecipeDao : JpaRepository<PublicRecipe?, Int?>, PublicRecipeRepo
      * @param port Count of portions for people
      */
     @Query("INSERT INTO public_recipe (title, ingredients_Text, preparation_Description, picture, cooking_Time, preparation_Time, user_Id, creation_Date, portions, mark_As_Evil) VALUES ((:title), (:ingr_Text), (:prep_Desc), (:pic), (:cook_T), (:prep_T), (:user), (:cre_D), (:port), 0)", nativeQuery = true)
-    fun addRecipe(title:String, ingr_Text:String, prep_Desc:String, pic:ByteArray, cook_T:Int, prep_T:Int, user:String, cre_D: Date, port:Int)
+    fun addRecipe(title:String, ingr_Text:String, prep_Desc:String, pic:String, cook_T:Int, prep_T:Int, user:String, cre_D: Date, port:Int)
 
     /**
      * Load id from last insert recipe

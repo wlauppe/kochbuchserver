@@ -42,7 +42,7 @@ class PublicRecipeService
     fun addRecipe(publicRecipe: PublicRecipeDto?) {
         if(publicRecipe?.userId == null) return
 
-        publicRecipeDao?.addRecipe(publicRecipe.title,publicRecipe.ingredientsText,publicRecipe.preparationDescription,publicRecipe.picture, publicRecipe.cookingTime, publicRecipe.preparationTime, publicRecipe.userId, publicRecipe.creationDate, publicRecipe.portions)
+        publicRecipeDao?.addRecipe(publicRecipe.title,publicRecipe.ingredientsText,publicRecipe.preparationDescription, "", publicRecipe.cookingTime, publicRecipe.preparationTime, publicRecipe.userId, publicRecipe.creationDate, publicRecipe.portions)
         publicRecipeDao?.flush()
 
         val recipeId = publicRecipeDao?.getLastId() ?: return

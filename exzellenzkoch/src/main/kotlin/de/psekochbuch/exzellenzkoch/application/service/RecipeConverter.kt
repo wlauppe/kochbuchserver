@@ -77,7 +77,7 @@ object RecipeConverter
      * @return List of converted ingredients
      */
     private fun convertChapterIngredientsToDto(ingredientsFromChapter: List<IngredientAmount>?): List<IngredientDto> {
-        val convertedIngredients:MutableList<IngredientDto> = ArrayList<IngredientDto>()
+        val convertedIngredients:MutableList<IngredientDto> = ArrayList()
         ingredientsFromChapter?.forEach {
             convertedIngredients.add(IngredientDto(it.chapter!!.chapterId, it.nameIngredient, it.amount,it.unit))
         }
@@ -90,10 +90,10 @@ object RecipeConverter
      */
     fun convertDtoToRecipe(recipe:PublicRecipeDto, userDao: UserDao) : PublicRecipe?
     {
-        val userId:String;
+        val userId:String
         if(recipe.userId == null)
         {
-            return null;
+            return null
         }
         else
         {
@@ -104,7 +104,7 @@ object RecipeConverter
     }
 
     fun convertDtoToIngredient(saveChapter: IngredientChapter?, ingredient: List<IngredientDto>?) :List<IngredientAmount> {
-        val convertedIngredient: MutableList<IngredientAmount> = ArrayList<IngredientAmount>()
+        val convertedIngredient: MutableList<IngredientAmount> = ArrayList()
         ingredient?.forEach {
             convertedIngredient.add(IngredientAmount(saveChapter,it.nameIngredient,it.amount,it.unit))
         }
