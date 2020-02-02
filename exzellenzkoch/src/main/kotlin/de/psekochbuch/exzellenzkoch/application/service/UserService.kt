@@ -1,6 +1,7 @@
 package de.psekochbuch.exzellenzkoch.application.service
 
 import com.google.firebase.auth.FirebaseAuth
+import de.psekochbuch.exzellenzkoch.application.dto.CustomTokenDto
 import de.psekochbuch.exzellenzkoch.application.dto.UserDto
 import de.psekochbuch.exzellenzkoch.infrastructure.dao.UserDao
 import de.psekochbuch.exzellenzkoch.security.firebase.FirebaseAuthentication
@@ -18,28 +19,45 @@ import org.springframework.transaction.annotation.Transactional
 class UserService {
 
     @Autowired
-    private var userdao:UserDao? = null
+    private var userDao:UserDao? = null
 
-    fun createUser(user: UserDto) {
+    fun createUser(user: UserDto) : CustomTokenDto? {
         val fireAuth : FirebaseAuthentication = SecurityContextHolder.getContext().authentication as FirebaseAuthentication
         val auth : FirebaseAuth = FirebaseAuth.getInstance()
-        if(userdao?.getUserIdByEmail((fireAuth.credentials as FirebaseTokenHolder).email) == user.userId) {
+        val claim : MutableMap<String, Any> = HashMap()
+        claim["normalUser"] = true
 
-            val claim : MutableMap<String, Any> = HashMap()
-            claim["normalUser"] = true
-            auth.setCustomUserClaims(fireAuth.principal as String, claim)
-        }
+        userDao?.createUser(user.userId, user.email, user.description)
+
+        return CustomTokenDto(auth.createCustomToken(fireAuth.principal as String, claim))
+        //auth.setCustomUserClaims(fireAuth.principal as String, claim)
     }
 
     fun updateUser(user: UserDto, userId: String) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        val fireAuth : FirebaseAuthentication = SecurityContextHolder.getContext().authentication as FirebaseAuthentication
+        if(userDao?.getUserIdByEmail((fireAuth.credentials as FirebaseTokenHolder).email) == userId) {
+            userDao?.findById(user.userId)?.map {dbUser ->
+                dbUser?.userId = user.userId
+                dbUser?.description = user.description
+                if(dbUser != null) userDao?.save(dbUser)
+            }
+        }
+
     }
 
     fun deleteUser(userId: String) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        val fireAuth : FirebaseAuthentication = SecurityContextHolder.getContext().authentication as FirebaseAuthentication
+        if (userDao?.getUserIdByEmail((fireAuth.credentials as FirebaseTokenHolder).email) == userId)
+        {
+            userDao?.deleteById(userId)
+        }
     }
 
-    fun getUser(userId: String): UserDto {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    fun getUser(userId: String): UserDto? {
+        var user :UserDto? = null
+        userDao?.findById(userId)?.map { dbUser ->
+            user = UserDto(dbUser!!.userId, dbUser.email, dbUser.description,dbUser.markAsEvil)
+        }
+        return user
     }
 }
