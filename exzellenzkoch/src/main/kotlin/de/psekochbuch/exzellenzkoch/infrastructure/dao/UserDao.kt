@@ -14,6 +14,6 @@ interface UserDao : JpaRepository<User?,String?>
     @Query("SELECT user_Id WHERE email = (:email)", nativeQuery = true)
     fun getUserIdByEmail(email:String): String
 
-    @Query("INSERT INTO User (user_Id, email, description, mark_As_Evil) VALUES ((:userId), (:email), (:description), 0)")
+    @Query("INSERT INTO User (user_Id, email, description, mark_As_Evil) VALUES ((:userId), (:email), (:description), 0)", nativeQuery = true)
     fun createUser(userId:String, email: String, description:String)
 }

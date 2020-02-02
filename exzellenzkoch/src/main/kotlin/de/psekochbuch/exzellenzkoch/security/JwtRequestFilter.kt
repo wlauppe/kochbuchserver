@@ -32,13 +32,13 @@ class JwtRequestFilter : OncePerRequestFilter() {
 
             val auth: FirebaseAuth = FirebaseAuth.getInstance()
             val apiDecodedToken: ApiFuture<FirebaseToken> = auth.verifyIdTokenAsync(requestTokenHeader)
-            while (!apiDecodedToken.isDone) {//wait}
+            while (!apiDecodedToken.isDone) {/*wait*/}
 
                 val decodedToken = apiDecodedToken.get()
 
                 val isvalidate = auth.getUserAsync(decodedToken.uid)
 
-                while (!isvalidate.isDone) {//wait}
+                while (!isvalidate.isDone) {/*wait*/}
 
                     val user = isvalidate.get()
 
@@ -48,8 +48,6 @@ class JwtRequestFilter : OncePerRequestFilter() {
                     }
                 }
                 chain.doFilter(request, response)
-            }
-        }
     }
 
     private fun checkIsAuth(decodedToken:FirebaseToken, uri:String) : Boolean {
