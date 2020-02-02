@@ -28,29 +28,40 @@ class JwtRequestFilter : OncePerRequestFilter() {
         val url = request.method
         request.requestURI
 
-        if (requestTokenHeader != null ) {
+        if (requestTokenHeader != null) {
 
-            val auth : FirebaseAuth = FirebaseAuth.getInstance()
+            val auth: FirebaseAuth = FirebaseAuth.getInstance()
             val apiDecodedToken: ApiFuture<FirebaseToken> = auth.verifyIdTokenAsync(requestTokenHeader)
-            while(!apiDecodedToken.isDone){}
+            while (!apiDecodedToken.isDone) {//wait}
 
-            val decodedToken = apiDecodedToken.get()
+                val decodedToken = apiDecodedToken.get()
 
-            val isvalidate = auth.getUserAsync(decodedToken.uid)
+                val isvalidate = auth.getUserAsync(decodedToken.uid)
 
-            while(!isvalidate.isDone){}
+                while (!isvalidate.isDone) {//wait}
 
-            val user = isvalidate.get()
+                    val user = isvalidate.get()
 
-            if (decodedToken?.uid != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-                val authenticationToken: Authentication = FirebaseAuthentication(decodedToken.uid, FirebaseTokenHolder(decodedToken), null)
-                SecurityContextHolder.getContext().setAuthentication(authenticationToken)
+                    if (decodedToken?.uid != null && SecurityContextHolder.getContext().authentication == null && checkIsAuth(decodedToken, request.requestURI)) {
+                        val authenticationToken: Authentication = FirebaseAuthentication(decodedToken.uid, FirebaseTokenHolder(decodedToken), null)
+                        SecurityContextHolder.getContext().authentication = authenticationToken
+                    }
+                }
+                chain.doFilter(request, response)
             }
         }
-        chain.doFilter(request, response)
     }
 
-    private fun checkIsAuth(decodedToken:ApiFuture<FirebaseToken>, uri:String){
-        //if(uri.matches("/api/users*"))
+    private fun checkIsAuth(decodedToken:FirebaseToken, uri:String) : Boolean {
+        if (uri.matches(Regex("/api/users+"))) {
+            return equals(decodedToken.claims["normalUser"])
+        }
+        if(uri.matches(Regex("api/admin*"))){
+            return equals(decodedToken.claims["admin"])
+        }
+        if(uri.matches(Regex("api/recipes/*"))) {
+            return true
+        }
+        return false
     }
 }
