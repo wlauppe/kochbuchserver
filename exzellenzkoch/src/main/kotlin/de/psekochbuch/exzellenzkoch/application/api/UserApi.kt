@@ -42,4 +42,12 @@ interface UserApi {
      */
     @GetMapping("/{userId}")
     fun getUser(@PathVariable userId: String) : UserDto?
+
+    /**
+     * POST-Request to report a user
+     * The URL ends with /api/users/report/{id}
+     * @param id Id of the user
+     */
+    @PostMapping("/report/{id}")
+    fun reportRecipe(@PathVariable(value = "id") id:String)
 }

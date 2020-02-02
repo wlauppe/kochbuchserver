@@ -31,4 +31,8 @@ class UserController : UserApi
         return service?.getUser(userId)
     }
 
+    override fun reportRecipe(id: String) {
+        service?.reportUser(id)
+    }
+
 }
