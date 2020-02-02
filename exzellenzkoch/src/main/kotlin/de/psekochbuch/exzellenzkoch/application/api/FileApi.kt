@@ -28,7 +28,7 @@ interface FileApi {
      * The URL ends with api/images/recipeId
      * @param file Picture to store
      * @param recipeId The id of the recipe, which has the picture
-     * @return The Online-Path of the File
+     * @return The Online-Url of the File
      */
     @PostMapping("/{recipeId}")
     @ResponseBody
@@ -38,12 +38,19 @@ interface FileApi {
      * PUT-Request to update an image from a recipe
      * The URL ends with api/images/recipeId
      * @param file Picture to update
-     * @param recipeId The id
+     * @param recipeId The id of the recipe
+     * @return The Online-Url of the File
      */
     @PutMapping("/{recipeId}")
     @ResponseBody
     fun updateImage(@RequestParam("file") file: MultipartFile, @PathVariable recipeId:Int) :FileDto?
 
+    /**
+     * DELETE-Request to delete an image from a recipe
+     * The URL ends with api/images/recipeId
+     * @param recipeId The id of the recipe
+     * @return Empty Url
+     */
     @DeleteMapping("/{recipeId}")
     fun deleteRecipe(@PathVariable  recipeId:Int) :FileDto?
 }

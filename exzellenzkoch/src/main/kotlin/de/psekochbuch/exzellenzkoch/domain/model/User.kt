@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import org.springframework.data.jpa.domain.support.AuditingEntityListener
 import java.io.Serializable
 import javax.persistence.*
+import javax.validation.constraints.NotBlank
 
 /**
  * Dataclass for user
@@ -24,6 +25,12 @@ data class User(
          * Description over an user
          */
         var description:String,
+
+        /**
+         * Email of the user
+         */
+        @NotBlank
+        val email:String,
 
        //@ManyToMany(cascade = [ CascadeType.ALL ], mappedBy = "members", targetEntity = Group::class)
        //var groups:List<Group>?,

@@ -14,6 +14,9 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.multipart.MultipartFile
 import java.io.File
 
+/**
+ * Implements the FileApi
+ */
 @Repository
 class FileController : FileApi {
 
