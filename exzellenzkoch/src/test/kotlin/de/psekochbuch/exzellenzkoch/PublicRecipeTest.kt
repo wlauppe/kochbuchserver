@@ -10,7 +10,7 @@ import org.springframework.test.context.junit4.SpringRunner
 
 
 @TestPropertySource(locations = ["classpath:test.properties"])
-@SpringBootTest
+//@SpringBootTest
 class PublicRecipeTest {
 
     @Autowired
@@ -21,5 +21,6 @@ class PublicRecipeTest {
     {
         val values = recipedao?.search("%Win%", null,null,null, 1, 10)
         val t = ""
+
     }
 }
