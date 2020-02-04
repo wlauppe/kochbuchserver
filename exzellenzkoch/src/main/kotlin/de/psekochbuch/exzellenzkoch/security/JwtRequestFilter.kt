@@ -42,7 +42,7 @@ class JwtRequestFilter : OncePerRequestFilter() {
 
                     val user = isvalidate.get()
 
-                    if (decodedToken?.uid != null && SecurityContextHolder.getContext().authentication == null && checkIsAuth(decodedToken, request.requestURI)) {
+                    if (decodedToken?.uid != null && SecurityContextHolder.getContext().authentication == null && checkIsAuth(decodedToken, request.requestURI, request.method)) {
                         val authenticationToken: Authentication = FirebaseAuthentication(decodedToken.uid, FirebaseTokenHolder(decodedToken), null)
                         SecurityContextHolder.getContext().authentication = authenticationToken
                     }
@@ -50,16 +50,30 @@ class JwtRequestFilter : OncePerRequestFilter() {
                 chain.doFilter(request, response)
     }
 
-    private fun checkIsAuth(decodedToken:FirebaseToken, uri:String) : Boolean {
-        if (uri.matches(Regex("/api/users+"))) {
+    private fun checkIsAuth(decodedToken:FirebaseToken, uri:String, method:String) : Boolean {
+        //Check user
+        if(uri.matches(Regex("api/users/report/*")))    return true
+        if(uri.matches(Regex("api/users+"))) return equals(decodedToken.claims["normalUser"])
+        if(uri.matches(Regex("api/users")) && method == "GET") return true
+
+        //Check admin
+        if(uri.matches(Regex("api/admin*"))) return equals(decodedToken.claims["admin"])
+
+        //Check recipes
+        if(uri.matches(Regex("api/recipes")))
+        {
+            if(method == "GET") return true
+            if(method == "POST") return equals(decodedToken.claims["normalUser"])
+        }
+        if(uri.matches(Regex("api/recipes+")) ) {
+            if(method == "GET") return true
+            if(uri.matches(Regex("api/recipes/report+"))) return true
             return equals(decodedToken.claims["normalUser"])
         }
-        if(uri.matches(Regex("api/admin*"))){
-            return equals(decodedToken.claims["admin"])
-        }
-        if(uri.matches(Regex("api/recipes/*"))) {
-            return true
-        }
+
+        //Check images
+        if(uri.matches(Regex("api/images/*/*"))&& method == "GET") return true
+        if(uri.matches(Regex("api/iamges*"))) return equals(decodedToken.claims["normalUser"])
         return false
     }
 }
