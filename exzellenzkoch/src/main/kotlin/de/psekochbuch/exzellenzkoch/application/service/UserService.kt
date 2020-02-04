@@ -21,6 +21,9 @@ class UserService {
     @Autowired
     private var userDao:UserDao? = null
 
+    /**
+     * Create an user on the DB and create a custom token with claims for the user
+     */
     fun createUser(user: UserDto) : CustomTokenDto? {
         val fireAuth : FirebaseAuthentication = SecurityContextHolder.getContext().authentication as FirebaseAuthentication
         val auth : FirebaseAuth = FirebaseAuth.getInstance()
@@ -33,6 +36,9 @@ class UserService {
         //auth.setCustomUserClaims(fireAuth.principal as String, claim)
     }
 
+    /**
+     * Update an user with the new 
+     */
     fun updateUser(user: UserDto, userId: String) {
         val fireAuth : FirebaseAuthentication = SecurityContextHolder.getContext().authentication as FirebaseAuthentication
         if(userDao?.getUserIdByEmail((fireAuth.credentials as FirebaseTokenHolder).email) == userId) {
@@ -62,6 +68,6 @@ class UserService {
     }
 
     fun reportUser(userId: String) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        userDao?.reportUser(userId)
     }
 }
