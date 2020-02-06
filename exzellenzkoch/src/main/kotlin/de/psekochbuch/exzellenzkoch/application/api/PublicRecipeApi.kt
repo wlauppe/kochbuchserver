@@ -26,7 +26,7 @@ interface PublicRecipeApi {
      * @param publicRecipe Recipe to add
      */
     @PostMapping ("")
-    fun addRecipe(@Valid @RequestBody publicRecipe:PublicRecipeDto?)
+    fun addRecipe(@Valid @RequestBody publicRecipe:PublicRecipeDto?) :PublicRecipeDto?
 
     /**
      * PUT-Request to update a recipe

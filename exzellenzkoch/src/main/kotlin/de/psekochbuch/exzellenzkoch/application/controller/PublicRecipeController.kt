@@ -33,8 +33,8 @@ class PublicRecipeController :PublicRecipeApi
      * Call the service, which add the recipe
      * @param publicRecipe Recipe to add
      */
-    override fun addRecipe(publicRecipe: PublicRecipeDto?) {
-        service?.addRecipe(publicRecipe)
+    override fun addRecipe(publicRecipe: PublicRecipeDto?) :PublicRecipeDto? {
+        return service?.addRecipe(publicRecipe)
     }
 
     /**

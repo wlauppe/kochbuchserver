@@ -1,6 +1,8 @@
 package de.psekochbuch.exzellenzkoch.application.service
 
+import de.psekochbuch.exzellenzkoch.application.dto.IngredientChapterDto
 import de.psekochbuch.exzellenzkoch.application.dto.PublicRecipeDto
+import de.psekochbuch.exzellenzkoch.domain.model.IngredientChapter
 import de.psekochbuch.exzellenzkoch.domain.model.PublicRecipe
 import de.psekochbuch.exzellenzkoch.infrastructure.dao.*
 import de.psekochbuch.exzellenzkoch.security.firebase.FirebaseAuthentication
@@ -39,20 +41,22 @@ class PublicRecipeService
      * Add the ingredients and tags to the database
      *@param publicRecipe The recipe that should add to the database
      */
-    fun addRecipe(publicRecipe: PublicRecipeDto?) {
-        if(publicRecipe?.userId == null) return
+    fun addRecipe(publicRecipe: PublicRecipeDto?) :PublicRecipeDto? {
+        if(publicRecipe?.userId == null) return null
 
         publicRecipeDao?.addRecipe(publicRecipe.title,publicRecipe.ingredientsText,publicRecipe.preparationDescription, "", publicRecipe.cookingTime, publicRecipe.preparationTime, publicRecipe.userId, publicRecipe.creationDate, publicRecipe.portions)
         publicRecipeDao?.flush()
 
-        val recipeId = publicRecipeDao?.getLastId() ?: return
+        val recipeId = publicRecipeDao?.getLastId() ?: return null
 
-        createChapterWithIngredients(publicRecipe, recipeId)
-        deleteRecipeTagFromRecipe(recipeId)
+        val chapterDto = createChapterWithIngredients(publicRecipe, recipeId)
+
 
         publicRecipe.recipeTag?.forEach{
             recipeTagDao?.addRecipeTag(it.name ,recipeId)
         }
+
+        return PublicRecipeDto(recipeId,publicRecipe.title,publicRecipe.ingredientsText,publicRecipe.preparationDescription,publicRecipe.picture,publicRecipe.cookingTime,publicRecipe.preparationTime,publicRecipe.userId,publicRecipe.creationDate,publicRecipe.portions,publicRecipe.ratingAvg,chapterDto,publicRecipe.recipeTag)
     }
 
     /**
@@ -93,6 +97,11 @@ class PublicRecipeService
 
             deleteChapterWithIngredients(publicRecipe.id)
             createChapterWithIngredients(publicRecipe, id)
+            deleteRecipeTagFromRecipe(publicRecipe.id)
+
+            publicRecipe.recipeTag?.forEach{
+                recipeTagDao?.addRecipeTag(it.name ,publicRecipe.id)
+            }
         }
     }
 
@@ -132,22 +141,26 @@ class PublicRecipeService
     }
 
     /**
-     * Create Chapters with there ingredients in the database
+     * Create Chapters with there ingredients in the database and convert the chapters in DTOs
      * @param publicRecipe the recipe form the ingredients and chapters
      * @param recipeId the id from the recipe from the database
      */
-    private fun createChapterWithIngredients(publicRecipe: PublicRecipeDto, recipeId: Int)
+    private fun createChapterWithIngredients(publicRecipe: PublicRecipeDto, recipeId: Int) : MutableList<IngredientChapterDto>?
     {
+        val chapterDto:MutableList<IngredientChapterDto> = ArrayList()
         publicRecipe.ingredientsChapter?.forEach { chapter ->
 
             ingredientChapterDao?.addChapter(recipeId,chapter.name)
             ingredientChapterDao?.flush()
-            val chapterId = ingredientChapterDao?.getLastId() ?: return
+            val chapterId = ingredientChapterDao?.getLastId() ?: return null
+            chapter.id = chapterId
+            chapterDto.add(chapter)
             chapter.ingredient?.forEach{
                 ingredientAmountDao?.addIngredient(chapterId, it.nameIngredient,it.amount, it.unit)
                 ingredientAmountDao?.flush()
             }
         }
+        return chapterDto
     }
 
     /**
