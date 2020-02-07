@@ -2,6 +2,7 @@ package de.psekochbuch.exzellenzkoch.application.controller
 
 import de.psekochbuch.exzellenzkoch.application.api.FileApi
 import de.psekochbuch.exzellenzkoch.application.dto.FileDto
+import de.psekochbuch.exzellenzkoch.application.dto.PublicRecipeDto
 import de.psekochbuch.exzellenzkoch.application.service.FileService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.core.io.ClassPathResource
@@ -27,7 +28,7 @@ class FileController : FileApi {
         return service?.getImage(imageName, userId)
     }
 
-    override fun addImage(file: MultipartFile, recipeId:Int) :FileDto? {
+    override fun addImage(file: MultipartFile, publicRecipeDto: PublicRecipeDto, recipeId:Int) :FileDto? {
         return service?.addImage(file, recipeId)
     }
 

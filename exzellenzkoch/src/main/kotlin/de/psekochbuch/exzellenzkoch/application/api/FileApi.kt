@@ -1,6 +1,7 @@
 package de.psekochbuch.exzellenzkoch.application.api
 
 import de.psekochbuch.exzellenzkoch.application.dto.FileDto
+import de.psekochbuch.exzellenzkoch.application.dto.PublicRecipeDto
 import org.springframework.core.io.InputStreamResource
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -32,7 +33,7 @@ interface FileApi {
      */
     @PostMapping("/{recipeId}")
     @ResponseBody
-    fun addImage(@RequestParam("file") file: MultipartFile, @PathVariable recipeId:Int) :FileDto?
+    fun addImage(@RequestParam("file") file: MultipartFile, @RequestParam("dto") publicRecipe:PublicRecipeDto, @PathVariable recipeId:Int) :FileDto?
 
     /**
      * PUT-Request to update an image from a recipe
