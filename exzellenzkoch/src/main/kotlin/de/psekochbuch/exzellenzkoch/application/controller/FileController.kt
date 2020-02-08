@@ -29,6 +29,7 @@ class FileController : FileApi {
     }
 
     override fun addImage(file: MultipartFile, publicRecipeDto: PublicRecipeDto, recipeId:Int) :FileDto? {
+    //override fun addImage(file: MultipartFile, recipeId:Int) :FileDto? {
         return service?.addImage(file, recipeId)
     }
 

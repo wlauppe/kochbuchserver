@@ -6,6 +6,7 @@ import org.springframework.core.io.InputStreamResource
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
+import javax.validation.Valid
 
 /**
  * Interface for the api from the picturesfiles
@@ -31,9 +32,11 @@ interface FileApi {
      * @param recipeId The id of the recipe, which has the picture
      * @return The Online-Url of the File
      */
-    @PostMapping("/{recipeId}")
+    @RequestMapping(value =["/{recipeId}"], method = [RequestMethod.POST],consumes = ["multipart/form-data"])
     @ResponseBody
-    fun addImage(@RequestParam("file") file: MultipartFile, @RequestParam("dto") publicRecipe:PublicRecipeDto, @PathVariable recipeId:Int) :FileDto?
+    fun addImage(@RequestPart("file", required = true) @Valid file: MultipartFile, @RequestPart("dto") @Valid publicRecipe:PublicRecipeDto, @PathVariable recipeId:Int) :FileDto?
+    //fun addImage(@RequestParam("file") file: MultipartFile, @PathVariable recipeId:Int) :FileDto?
+    //fun addImage(@RequestParam("file") file: MultipartFile, @PathVariable recipeId:Int) :FileDto?
 
     /**
      * PUT-Request to update an image from a recipe
