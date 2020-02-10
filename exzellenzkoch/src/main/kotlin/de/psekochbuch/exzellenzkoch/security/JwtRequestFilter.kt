@@ -65,23 +65,23 @@ class JwtRequestFilter : OncePerRequestFilter() {
 
 
         //Check admin
-        if(uri.matches(Regex("api/admin*"))) return equals(decodedToken.claims["admin"])
+        if(uri.matches(Regex("/api/admin*"))) return equals(decodedToken.claims["admin"])
 
         //Check recipes
-        if(uri.matches(Regex("api/recipes")))
+        if(uri.matches(Regex("/api/recipes")))
         {
             if(method == "GET") return true
             if(method == "POST") return equals(decodedToken.claims["normalUser"])
         }
-        if(uri.matches(Regex("api/recipes+")) ) {
+        if(uri.matches(Regex("/api/recipes+")) ) {
             if(method == "GET") return true
-            if(uri.matches(Regex("api/recipes/report+"))) return true
+            if(uri.matches(Regex("/api/recipes/report+"))) return true
             return equals(decodedToken.claims["normalUser"])
         }
 
         //Check images
-        if(uri.matches(Regex("api/images/*/*"))&& method == "GET") return true
-        if(uri.matches(Regex("api/iamges*"))) return equals(decodedToken.claims["normalUser"])
+        if(uri.matches(Regex("/api/images/*/*"))&& method == "GET") return true
+        if(uri.matches(Regex("/api/images*"))) return equals(decodedToken.claims["normalUser"])
         return false
     }
 }
