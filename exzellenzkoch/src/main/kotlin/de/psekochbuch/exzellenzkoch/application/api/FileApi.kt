@@ -53,5 +53,5 @@ interface FileApi {
      * @return Empty Url
      */
     @DeleteMapping("/{userId}/{imageName}")
-    fun deleteRecipe(@PathVariable imageName:String, @PathVariable userId:String) : FileDto?
+    fun deleteImage(@PathVariable imageName:String, @PathVariable userId:String) : FileDto?
 }

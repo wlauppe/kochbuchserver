@@ -36,7 +36,7 @@ class FileController : FileApi {
         return service?.updateImage(file, userId, imageName)
     }
 
-    override fun deleteRecipe(imageName: String, userId: String) :FileDto? {
+    override fun deleteImage(imageName: String, userId: String) :FileDto? {
         return service?.deleteImage(imageName, userId)
     }
 
