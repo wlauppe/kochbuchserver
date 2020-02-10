@@ -1,5 +1,6 @@
 package de.psekochbuch.exzellenzkoch.application.api
 
+import de.psekochbuch.exzellenzkoch.application.dto.CustomTokenDto
 import de.psekochbuch.exzellenzkoch.application.dto.UserDto
 import org.springframework.web.bind.annotation.*
 import javax.validation.Valid
@@ -13,10 +14,10 @@ interface UserApi {
     /**
      * POST-Request to create a new user
      * The URL ends with /api/users
-     * @param user The user to create
+     * @param userId The id of user to create
      */
-    @PostMapping("")
-    fun createUser(@Valid @RequestBody user:UserDto)
+    @PostMapping("/{userId}")
+    fun createUser(@PathVariable userId:String) :CustomTokenDto?
 
     /**
      * PUT-Request to update an user

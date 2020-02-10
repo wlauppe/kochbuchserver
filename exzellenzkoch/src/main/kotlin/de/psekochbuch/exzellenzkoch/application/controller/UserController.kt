@@ -1,6 +1,7 @@
 package de.psekochbuch.exzellenzkoch.application.controller
 
 import de.psekochbuch.exzellenzkoch.application.api.UserApi
+import de.psekochbuch.exzellenzkoch.application.dto.CustomTokenDto
 import de.psekochbuch.exzellenzkoch.application.dto.UserDto
 import de.psekochbuch.exzellenzkoch.application.service.UserService
 import org.springframework.beans.factory.annotation.Autowired
@@ -15,8 +16,8 @@ class UserController : UserApi
     @Autowired
     private var service:UserService? = null
 
-    override fun createUser(user: UserDto) {
-        service?.createUser(user)
+    override fun createUser(userId: String) :CustomTokenDto?{
+        return service?.createUser(userId)
     }
 
     override fun updateUser(user: UserDto, userId: String) {

@@ -24,13 +24,13 @@ class UserService {
     /**
      * Create an user on the DB and create a custom token with claims for the user
      */
-    fun createUser(user: UserDto) : CustomTokenDto? {
+    fun createUser(userId: String) : CustomTokenDto? {
         val fireAuth : FirebaseAuthentication = SecurityContextHolder.getContext().authentication as FirebaseAuthentication
         val auth : FirebaseAuth = FirebaseAuth.getInstance()
         val claim : MutableMap<String, Any> = HashMap()
         claim["normalUser"] = true
 
-        userDao?.createUser(user.userId, user.email, user.description)
+        userDao?.createUser(userId, (fireAuth.credentials as FirebaseTokenHolder).email, "")
 
         return CustomTokenDto(auth.createCustomToken(fireAuth.principal as String, claim))
         //auth.setCustomUserClaims(fireAuth.principal as String, claim)
@@ -60,9 +60,9 @@ class UserService {
     }
 
     fun getUser(userId: String): UserDto? {
-        var user :UserDto? = null
+        var user :UserDto? = UserDto("", description = "")
         userDao?.findById(userId)?.map { dbUser ->
-            user = UserDto(dbUser!!.userId, dbUser.email, dbUser.description,dbUser.markAsEvil)
+            user = UserDto(dbUser!!.userId, description = dbUser.description)
         }
         return user
     }
