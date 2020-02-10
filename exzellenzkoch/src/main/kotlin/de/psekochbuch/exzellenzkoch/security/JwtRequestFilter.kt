@@ -3,6 +3,7 @@ package de.psekochbuch.exzellenzkoch.security
 import com.google.api.core.ApiFuture
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseToken
+import com.google.firebase.auth.UserInfo
 import de.psekochbuch.exzellenzkoch.security.firebase.FirebaseAuthentication
 import de.psekochbuch.exzellenzkoch.security.firebase.FirebaseTokenHolder
 import org.springframework.security.core.Authentication
@@ -28,6 +29,11 @@ class JwtRequestFilter : OncePerRequestFilter() {
         val url = request.method
         request.requestURI
 
+        val au  = FirebaseAuth.getInstance().getUser("b5MwkfPqnCPx4Gb90mtLfx5T22F3")
+        val tt = au.displayName;
+        val test = "test"
+
+
         if (requestTokenHeader != null) {
 
             val auth: FirebaseAuth = FirebaseAuth.getInstance()
@@ -52,9 +58,11 @@ class JwtRequestFilter : OncePerRequestFilter() {
 
     private fun checkIsAuth(decodedToken:FirebaseToken, uri:String, method:String) : Boolean {
         //Check user
-        if(uri.matches(Regex("api/users/report/*")))    return true
-        if(uri.matches(Regex("api/users+"))) return equals(decodedToken.claims["normalUser"])
-        if(uri.matches(Regex("api/users")) && method == "GET") return true
+        if(uri.matches(Regex("/api/users/report/*")))    return true
+        if(uri.matches(Regex("/api/users/\\w+")) && method == "GET") return true
+        if(uri.matches(Regex("/api/users/(\\w+)")) && method == "POST") return true
+        if(uri.matches(Regex("/api/users+"))) return equals(decodedToken.claims["normalUser"])
+
 
         //Check admin
         if(uri.matches(Regex("api/admin*"))) return equals(decodedToken.claims["admin"])
