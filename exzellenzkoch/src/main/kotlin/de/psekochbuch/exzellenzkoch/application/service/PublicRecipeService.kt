@@ -1,5 +1,6 @@
 package de.psekochbuch.exzellenzkoch.application.service
 
+import com.google.firebase.auth.FirebaseAuth
 import de.psekochbuch.exzellenzkoch.application.dto.IngredientChapterDto
 import de.psekochbuch.exzellenzkoch.application.dto.PublicRecipeDto
 import de.psekochbuch.exzellenzkoch.domain.model.IngredientChapter
@@ -44,7 +45,7 @@ class PublicRecipeService
     fun addRecipe(publicRecipe: PublicRecipeDto?) :PublicRecipeDto? {
         if(publicRecipe?.userId == null) return null
 
-        publicRecipeDao?.addRecipe(publicRecipe.title,publicRecipe.ingredientsText,publicRecipe.preparationDescription, "", publicRecipe.cookingTime, publicRecipe.preparationTime, publicRecipe.userId, publicRecipe.creationDate, publicRecipe.portions)
+        publicRecipeDao?.addRecipe(publicRecipe.title,publicRecipe.ingredientsText,publicRecipe.preparationDescription, publicRecipe.picture, publicRecipe.cookingTime, publicRecipe.preparationTime, publicRecipe.userId, publicRecipe.creationDate, publicRecipe.portions)
         publicRecipeDao?.flush()
 
         val recipeId = publicRecipeDao?.getLastId() ?: return null
@@ -66,7 +67,7 @@ class PublicRecipeService
     fun deleteRecipe(id: Int) {
         val publicRecipe = publicRecipeDao?.findById(id)?.get()
         val auth : FirebaseAuthentication = SecurityContextHolder.getContext().authentication as FirebaseAuthentication
-        if(auth.principal == publicRecipe?.user?.userId)
+        if(FirebaseAuth.getInstance().getUser(auth.principal as String).displayName == publicRecipe?.user?.userId)
         {
             deleteChapterWithIngredients(id)
             deleteRecipeTagFromRecipe(id)
@@ -83,9 +84,9 @@ class PublicRecipeService
     fun updateRecipe(publicRecipe: PublicRecipeDto?, id: Int) {
 
         val auth : FirebaseAuthentication = SecurityContextHolder.getContext().authentication as FirebaseAuthentication
-        if(auth.principal == publicRecipe?.userId) {
+        if(FirebaseAuth.getInstance().getUser(auth.principal as String).displayName == publicRecipe?.userId) {
             publicRecipeDao?.findById(id)?.map {
-                it?.title = publicRecipe.title
+                it?.title = publicRecipe!!.title
                 it?.ingredientsText = publicRecipe.ingredientsText
                 it?.preparationDescription = publicRecipe.preparationDescription
                 it?.picture = publicRecipe.picture
@@ -95,7 +96,7 @@ class PublicRecipeService
                 if (it != null) publicRecipeDao?.save(it)
             }
 
-            deleteChapterWithIngredients(publicRecipe.id)
+            deleteChapterWithIngredients(publicRecipe!!.id)
             createChapterWithIngredients(publicRecipe, id)
             deleteRecipeTagFromRecipe(publicRecipe.id)
 
