@@ -23,4 +23,7 @@ interface UserDao : JpaRepository<User?,String?>
      */
     @Query("UPDATE user SET mark_as_Evil = 1 WHERE user_Id = (:id)", nativeQuery = true)
     fun reportUser(id: String)
+
+    @Query("SELECT user_Id FROM user WHERE user_Id LIKE '%KochDummy%' ORDER BY user_Id DESC LIMIT 1", nativeQuery = true)
+    fun getCountTmpUser() :String
 }

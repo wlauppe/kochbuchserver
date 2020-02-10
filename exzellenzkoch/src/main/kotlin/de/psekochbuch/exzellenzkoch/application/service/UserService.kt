@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.lang.NumberFormatException
 
 /**
  * Class for management of user
@@ -30,10 +31,33 @@ class UserService {
         val claim : MutableMap<String, Any> = HashMap()
         claim["normalUser"] = true
 
-        userDao?.createUser(userId, (fireAuth.credentials as FirebaseTokenHolder).email, "")
+        var id = ""
+        id = if(userId == "")
+        {
+            createUniqueUserId()
+        } else {
+            userId
+        }
+
+        userDao?.createUser(id, (fireAuth.credentials as FirebaseTokenHolder).email, "")
 
         return CustomTokenDto(auth.createCustomToken(fireAuth.principal as String, claim))
         //auth.setCustomUserClaims(fireAuth.principal as String, claim)
+    }
+
+    private fun createUniqueUserId(): String {
+        val dummy = userDao?.getCountTmpUser()
+        if(dummy != null)
+        {
+            return try {
+                val count = dummy.substring(0, "KochDummy".length).toInt()
+                "KochDummy" + (count + 1)
+
+            }catch (ex : NumberFormatException) {
+                ""
+            }
+        }
+        return ""
     }
 
     /**
