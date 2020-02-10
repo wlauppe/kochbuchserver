@@ -11,6 +11,7 @@ import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Repository
 import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.multipart.MultipartFile
 import java.io.File
 
@@ -27,16 +28,16 @@ class FileController : FileApi {
         return service?.getImage(imageName, userId)
     }
 
-    override fun addImage(file: MultipartFile, recipeId:Int) :FileDto? {
-        return service?.addImage(file, recipeId)
+    override fun addImage(file: MultipartFile): FileDto? {
+        return service?.addImage(file)
     }
 
-    override fun updateImage(file: MultipartFile, recipeId: Int): FileDto? {
-        return service?.updateImage(file,recipeId)
+    override fun updateImage(file: MultipartFile, imageName: String, userId: String): FileDto? {
+        return service?.updateImage(file, userId, imageName)
     }
 
-    override fun deleteRecipe(recipeId: Int): FileDto? {
-        return service?.deleteImage(recipeId)
+    override fun deleteRecipe(imageName: String, userId: String) :FileDto? {
+        return service?.deleteImage(imageName, userId)
     }
 
 }

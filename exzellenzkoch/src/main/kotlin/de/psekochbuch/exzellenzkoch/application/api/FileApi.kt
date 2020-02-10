@@ -27,30 +27,31 @@ interface FileApi {
      * POST-Request to add an image to a recipe
      * The URL ends with api/images/recipeId
      * @param file Picture to store
-     * @param recipeId The id of the recipe, which has the picture
      * @return The Online-Url of the File
      */
-    @PostMapping("/{recipeId}")
+    @PostMapping("")
     @ResponseBody
-    fun addImage(@RequestParam("file") file: MultipartFile, @PathVariable recipeId:Int) :FileDto?
+    fun addImage(@RequestParam("file") file: MultipartFile) :FileDto?
 
     /**
      * PUT-Request to update an image from a recipe
      * The URL ends with api/images/recipeId
      * @param file Picture to update
-     * @param recipeId The id of the recipe
+     * @param imageName Name form the picture
+     * @param userId The id of the user, which uploaded the picture
      * @return The Online-Url of the File
      */
-    @PutMapping("/{recipeId}")
+    @PutMapping("/{userId}/{imageName}")
     @ResponseBody
-    fun updateImage(@RequestParam("file") file: MultipartFile, @PathVariable recipeId:Int) :FileDto?
+    fun updateImage(@RequestParam("file") file: MultipartFile, @PathVariable imageName:String, @PathVariable userId:String) :FileDto?
 
     /**
      * DELETE-Request to delete an image from a recipe
      * The URL ends with api/images/recipeId
-     * @param recipeId The id of the recipe
+     * @param imageName Name form the picture
+     * @param userId The id of the user, which uploaded the picture
      * @return Empty Url
      */
-    @DeleteMapping("/{recipeId}")
-    fun deleteRecipe(@PathVariable  recipeId:Int) :FileDto?
+    @DeleteMapping("/{userId}/{imageName}")
+    fun deleteRecipe(@PathVariable imageName:String, @PathVariable userId:String) : FileDto?
 }
