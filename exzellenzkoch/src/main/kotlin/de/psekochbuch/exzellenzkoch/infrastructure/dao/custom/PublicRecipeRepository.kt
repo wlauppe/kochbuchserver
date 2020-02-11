@@ -19,4 +19,6 @@ interface PublicRecipeRepository
      */
     fun search(title:String?, tags:List<String>?, ingredients:List<String>?,
                creationDate: Date?, pageNumber:Int, count:Int) : MutableList<Any?>?
+
+    fun getReportedRecipes(pageNumber: Int, count: Int) :MutableList<Any?>?
 }

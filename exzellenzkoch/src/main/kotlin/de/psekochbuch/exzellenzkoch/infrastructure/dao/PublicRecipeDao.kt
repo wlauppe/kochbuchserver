@@ -48,4 +48,7 @@ interface PublicRecipeDao : JpaRepository<PublicRecipe?, Int?>, PublicRecipeRepo
      */
     @Query("UPDATE public_recipe SET mark_as_Evil = 1 WHERE recipe_id = (:id)", nativeQuery = true)
     fun reportRecipe(id: Int)
+
+    @Query( "UPDATE public_recipe SET mark_as_Evil = 0 WHERE recipe_id = (:id)", nativeQuery = true)
+    fun deReportRecipe(id:Int)
 }

@@ -50,5 +50,14 @@ class PublicRecipeRepositoryImpl : PublicRecipeRepository
         return nativeQuery?.resultList
     }
 
+    override fun getReportedRecipes(pageNumber: Int, count: Int) :MutableList<Any?>?
+    {
+        val query:String = "SELECT * FROM public_recipe WHERE mark_as_Evil = 1 ORDER BY creation_Date ASC LIMIT " + ((pageNumber -1)* count) + "," + count + ";"
+
+        val nativeQuery = entityManager?.createNativeQuery(query, PublicRecipe::class.java)
+
+        return nativeQuery?.resultList
+    }
+
 
 }
