@@ -32,6 +32,9 @@ class FirebaseTokenHolder(private val token: FirebaseToken) {
     val uid: String
         get() = token.uid
 
+    val isAdmin: Boolean
+        get() = equals(token.claims["admin"])
+
     val googleId: String?
         get() = (((token.claims["firebase"] as ArrayMap<*, *>)["identities"] as ArrayMap<*, *>?)!!["google.com"] as ArrayList<String?>?)!![0]
 
