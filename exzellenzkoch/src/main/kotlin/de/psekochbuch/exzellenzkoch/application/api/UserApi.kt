@@ -20,6 +20,14 @@ interface UserApi {
     fun createUser(@PathVariable userId:String) :CustomTokenDto?
 
     /**
+     * POST-Request to create a new user
+     * The URL ends with /api/users
+     * @param userId The id of user to create
+     */
+    @PostMapping("/")
+    fun createUser() :CustomTokenDto?
+
+    /**
      * PUT-Request to update an user
      * The URL ends with /api/users/{userId}
      * @param user The user to update
@@ -43,6 +51,14 @@ interface UserApi {
      */
     @GetMapping("/{userId}")
     fun getUser(@PathVariable userId: String) : UserDto?
+
+    /**
+     * GET-Request to get a user with specific id
+     * The URL ends with /api/users/check/{userId}
+     * @param userId The id of the user
+     */
+    @GetMapping("/check/{userId}")
+    fun checkUser(@PathVariable userId: String) : UserDto?
 
     /**
      * POST-Request to report a user

@@ -20,6 +20,10 @@ class UserController : UserApi
         return service?.createUser(userId)
     }
 
+    override fun createUser(): CustomTokenDto? {
+        return service?.createUser("")
+    }
+
     override fun updateUser(user: UserDto, userId: String) {
         service?.updateUser(user, userId)
     }
@@ -30,6 +34,10 @@ class UserController : UserApi
 
     override fun getUser(userId: String): UserDto? {
         return service?.getUser(userId)
+    }
+
+    override fun checkUser(userId: String): UserDto? {
+        return service?.checkUser(userId)
     }
 
     override fun reportRecipe(id: String) {
