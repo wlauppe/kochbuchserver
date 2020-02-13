@@ -49,7 +49,7 @@ data class PublicRecipeDto(
         /**
          * Date of the recipe, when it is created
          */
-        var creationDate:Date,
+        var creationDate:String,
 
         /**
          * Count of portions for people
