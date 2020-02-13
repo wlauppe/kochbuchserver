@@ -12,6 +12,10 @@ import de.psekochbuch.exzellenzkoch.infrastructure.dao.IngredientChapterDao
 import de.psekochbuch.exzellenzkoch.infrastructure.dao.IngredientDao
 import de.psekochbuch.exzellenzkoch.infrastructure.dao.RecipeTagDao
 import de.psekochbuch.exzellenzkoch.infrastructure.dao.UserDao
+import java.text.DateFormat
+import java.text.SimpleDateFormat
+import java.util.*
+import kotlin.collections.ArrayList
 
 /**
  * This class converts DTOs to modelobjects and modelobjects to DTOs
@@ -40,7 +44,7 @@ object RecipeConverter
 
         val recipeTagDto = convertRecipeTagsToDto(recipeTagDao?.getRecipeTagsFromRecipe(recipe!!.recipeId))
 
-        return PublicRecipeDto(recipe!!.recipeId, recipe.title, recipe.ingredientsText, recipe.preparationDescription, recipe.picture, recipe.cookingTime, recipe.preparationTime, recipe.user?.userId, recipe.creationDate, recipe.portions, 0, recipeChapterDto, recipeTagDto)
+        return PublicRecipeDto(recipe!!.recipeId, recipe.title, recipe.ingredientsText, recipe.preparationDescription, recipe.picture, recipe.cookingTime, recipe.preparationTime, recipe.user?.userId, convertDateToString(recipe.creationDate), recipe.portions, 0, recipeChapterDto, recipeTagDto)
     }
 
     /**
@@ -100,7 +104,7 @@ object RecipeConverter
             userId = recipe.userId
         }
         val user = userDao.findById(userId).get()
-        return PublicRecipe(recipe.id,recipe.title,recipe.ingredientsText,recipe.preparationDescription, recipe.picture,recipe.cookingTime,recipe.preparationTime, user, recipe.creationDate, false, recipe.portions, null)
+        return PublicRecipe(recipe.id,recipe.title,recipe.ingredientsText,recipe.preparationDescription, recipe.picture,recipe.cookingTime,recipe.preparationTime, user,  convertStringToDate(recipe.creationDate), false, recipe.portions, null)
     }
 
     fun convertDtoToIngredient(saveChapter: IngredientChapter?, ingredient: List<IngredientDto>?) :List<IngredientAmount> {
@@ -111,5 +115,15 @@ object RecipeConverter
         return convertedIngredient
     }
 
+    fun convertDateToString(date: Date):String
+        {
+            val dateFormat: DateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+            return dateFormat.format(date)
+        }
+
+        fun convertStringToDate(date:String): Date
+        {
+            return SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(date)
+        }
 
 }
