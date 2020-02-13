@@ -33,5 +33,5 @@ interface UserDao : JpaRepository<User?,String?>, UserRepository
     fun deReportUser(id: String)
 
     @Query("SELECT user_Id FROM user WHERE user_Id REGEXP 'KochDummy([0-9]*)$' ORDER BY LENGTH(user_Id) DESC, user_Id DESC LIMIT 1", nativeQuery = true)
-    fun getCountTmpUser() :String
+    fun getCountTmpUser() :String?
 }
