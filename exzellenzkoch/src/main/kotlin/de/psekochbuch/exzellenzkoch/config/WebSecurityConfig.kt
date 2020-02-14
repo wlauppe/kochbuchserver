@@ -44,7 +44,7 @@ class WebSecurityConfig : WebSecurityConfigurerAdapter() {
         web?.ignoring()?.antMatchers("/api/recipes/{id}")
         web?.ignoring()?.antMatchers("/api/recipes")
         web?.ignoring()?.antMatchers("/api/recipes/report/{id}")
-        web?.ignoring()?.antMatchers("/api/images/{imageName}")
+        web?.ignoring()?.antMatchers("/api/images/{userId}/{imageName}")
         web?.ignoring()?.antMatchers("/api/images/{recipeId}")
         web?.ignoring()?.antMatchers("/api/users/{userId}")
     }

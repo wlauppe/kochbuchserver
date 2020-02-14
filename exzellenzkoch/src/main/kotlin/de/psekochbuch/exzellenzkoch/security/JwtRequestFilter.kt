@@ -29,10 +29,6 @@ class JwtRequestFilter : OncePerRequestFilter() {
         val url = request.method
         request.requestURI
 
-        val au  = FirebaseAuth.getInstance().getUser("b5MwkfPqnCPx4Gb90mtLfx5T22F3")
-        val tt = au.displayName;
-        val test = "test"
-
 
         if (requestTokenHeader != null) {
 
