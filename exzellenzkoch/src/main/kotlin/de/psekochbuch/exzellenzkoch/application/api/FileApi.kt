@@ -25,7 +25,7 @@ interface FileApi {
 
     /**
      * POST-Request to add an image to a recipe
-     * The URL ends with api/images/recipeId
+     * The URL ends with api/images
      * @param file Picture to store
      * @return The Online-Url of the File
      */
@@ -34,8 +34,8 @@ interface FileApi {
     fun addImage(@RequestParam("file") file: MultipartFile) :FileDto?
 
     /**
-     * PUT-Request to update an image from a recipe
-     * The URL ends with api/images/recipeId
+     * PUT-Request to update an image
+     * The URL ends with api/images
      * @param file Picture to update
      * @param imageName Name form the picture
      * @param userId The id of the user, which uploaded the picture
@@ -47,7 +47,7 @@ interface FileApi {
 
     /**
      * DELETE-Request to delete an image from a recipe
-     * The URL ends with api/images/recipeId
+     * The URL ends with api/images/userId/imageName
      * @param imageName Name form the picture
      * @param userId The id of the user, which uploaded the picture
      * @return Empty Url

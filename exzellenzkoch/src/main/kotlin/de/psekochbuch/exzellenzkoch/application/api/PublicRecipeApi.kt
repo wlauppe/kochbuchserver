@@ -24,6 +24,7 @@ interface PublicRecipeApi {
      * POST-Request to add a new recipe.
      * The URL ends with /api/recipes
      * @param publicRecipe Recipe to add
+     * @return The new created recipe
      */
     @PostMapping ("")
     fun addRecipe(@Valid @RequestBody publicRecipe:PublicRecipeDto?) :PublicRecipeDto?
@@ -74,7 +75,8 @@ interface PublicRecipeApi {
 
     /**
      * Get recipes from user
-     * @return list of recipedtos
+     * @param userId Id of the user who has recipes
+     * @return list of recipes
      */
     @GetMapping("/user/{userId}")
     fun getUserRecipes(@PathVariable(value = "userId") userId : String) : List<PublicRecipeDto>?
