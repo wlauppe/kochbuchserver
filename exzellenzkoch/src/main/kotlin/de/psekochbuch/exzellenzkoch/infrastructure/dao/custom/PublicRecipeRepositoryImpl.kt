@@ -26,16 +26,16 @@ class PublicRecipeRepositoryImpl : PublicRecipeRepository
                 "LEFT JOIN ingredient_amount a ON c.chapter_Id = a.chapter_Id " +
                 "LEFT JOIN recipe_tag t ON p.recipe_Id = t.recipe_Id "
         if(title != null || tags != null || ingredients != null || creationDate  != null) query += "WHERE "
-
-        if(title != null) query += "p.title LIKE (:title) "; var hasCriteriaSet = true
-        if(ingredients != null)
+        var hasCriteriaSet = false
+        if(title != null) {query += "p.title LIKE (:title) "; hasCriteriaSet = true}
+        if(ingredients != null){
             query += if(hasCriteriaSet) "AND a.name_Ingredient IN (:ingredients) "
-            else " a.name_Ingredient IN (:ingredients)"; hasCriteriaSet = true
-        if(tags != null)
-            query += if(hasCriteriaSet) "AND t.tag_Id IN (:tags)" else " t.tag_Id IN (:tags) " ; hasCriteriaSet = true
+            else " a.name_Ingredient IN (:ingredients)"; hasCriteriaSet = true}
+        if(tags != null){
+            query += if(hasCriteriaSet) "AND t.tag_Id IN (:tags) " else " t.tag_Id IN (:tags) " ; hasCriteriaSet = true}
 
-        if(creationDate != null)
-            query += if(hasCriteriaSet) "AND p.creation_Date = (:creationDate) " else " p.creation_Date = (:creationDate) "
+        if(creationDate != null){
+            query += if(hasCriteriaSet) "AND p.creation_Date = (:creationDate) " else " p.creation_Date = (:creationDate) "}
         query += "GROUP BY recipe_id ORDER BY creation_Date ASC LIMIT " + ((pageNumber -1)* count) + "," + count + ";"
 
         val nativeQuery = entityManager?.createNativeQuery(query, PublicRecipe::class.java)
