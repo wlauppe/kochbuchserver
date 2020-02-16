@@ -19,3 +19,19 @@ data class IngredientChapterDto(
          */
         var ingredient:List<IngredientDto>?
 )
+{
+        override fun equals(other: Any?): Boolean {
+                if(other is IngredientChapterDto)
+                {
+                        if(other.id != this.id) return false
+                        if(other.name != this.name) return false
+                        val ingr = other.ingredient
+                        if(ingr != null)
+                        {
+                                if(!ingr.equals(this.ingredient)) return false
+                        }
+                        return true
+                }
+                return false
+        }
+}
