@@ -64,11 +64,11 @@ class FileService {
             return FileDto("api/$localPath")
         }
         var count = 1
-        var editFileName = "images/"+ userId + "/$name" + "_$count" + FilenameUtils.getExtension(fileName)
+        var editFileName = "images/"+ userId + "/$name" + "_$count" + "." + FilenameUtils.getExtension(fileName)
         while(File(editFileName).exists())
         {
             count++
-            editFileName = "images/"+ userId + "/$name" + "_$count" + FilenameUtils.getExtension(fileName)
+            editFileName = "images/"+ userId + "/$name" + "_$count" + "." + FilenameUtils.getExtension(fileName)
         }
         File(editFileName).writeBytes(file.bytes)
 
@@ -86,7 +86,7 @@ class FileService {
         val auth : FirebaseAuthentication = SecurityContextHolder.getContext().authentication as FirebaseAuthentication
         if(FirebaseAuth.getInstance().getUser(auth.principal as String).displayName == userId) {
 
-            val localPath = "$userId/$imageName"
+            val localPath ="images/$userId/$imageName"
 
             val localFile = File(localPath)
 
@@ -108,7 +108,7 @@ class FileService {
         val auth : FirebaseAuthentication = SecurityContextHolder.getContext().authentication as FirebaseAuthentication
         if(FirebaseAuth.getInstance().getUser(auth.principal as String).displayName == userId) {
 
-            val localFile = File("$userId/$imageName")
+            val localFile = File("images/$userId/$imageName")
             if (localFile.exists()) localFile.delete()
 
             return FileDto("")
