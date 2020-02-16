@@ -1,6 +1,7 @@
 package de.psekochbuch.exzellenzkoch.application.controller
 
 import de.psekochbuch.exzellenzkoch.application.api.UserApi
+import de.psekochbuch.exzellenzkoch.application.dto.AdminDto
 import de.psekochbuch.exzellenzkoch.application.dto.CustomTokenDto
 import de.psekochbuch.exzellenzkoch.application.dto.UserDto
 import de.psekochbuch.exzellenzkoch.application.service.UserService
@@ -42,6 +43,10 @@ class UserController : UserApi
 
     override fun reportUser(id: String) {
         service?.reportUser(id)
+    }
+
+    override fun isAdmin(): AdminDto? {
+        return service?.isAdmin()
     }
 
 }

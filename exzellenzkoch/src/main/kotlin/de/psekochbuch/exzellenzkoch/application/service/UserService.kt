@@ -5,6 +5,7 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import de.psekochbuch.exzellenzkoch.application.dto.AdminDto
 import de.psekochbuch.exzellenzkoch.application.dto.CustomTokenDto
 import de.psekochbuch.exzellenzkoch.application.dto.UserDto
 import de.psekochbuch.exzellenzkoch.infrastructure.UserChecker
@@ -114,6 +115,14 @@ class UserService {
 
     fun reportUser(userId: String) {
         userDao?.reportUser(userId)
+    }
+
+    fun isAdmin(): AdminDto {
+        val auth : FirebaseAuthentication = SecurityContextHolder.getContext().authentication as FirebaseAuthentication
+        if(userDao?.isAdmin(FirebaseAuth.getInstance().getUser(auth.principal as String).displayName) == 1) {
+            return AdminDto(true)
+        }
+        return AdminDto(false)
     }
 
 
