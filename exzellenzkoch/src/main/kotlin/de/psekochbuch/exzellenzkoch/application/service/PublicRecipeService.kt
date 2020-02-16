@@ -25,6 +25,7 @@ class PublicRecipeService
     @Autowired private var ingredientChapterDao: IngredientChapterDao? = null
     @Autowired private var recipeTagDao: RecipeTagDao? = null
     @Autowired private var ingredientAmountDao: IngredientDao? = null
+    @Autowired private var userDao : UserDao? = null
 
     /**
      * Load, convert and return the recipe with the id
@@ -43,6 +44,8 @@ class PublicRecipeService
      *@param publicRecipe The recipe that should add to the database
      */
     fun addRecipe(publicRecipe: PublicRecipeDto?) :PublicRecipeDto? {
+        val auth : FirebaseAuthentication = SecurityContextHolder.getContext().authentication as FirebaseAuthentication
+        if(FirebaseAuth.getInstance().getUser(auth.principal as String).displayName == publicRecipe?.userId) {
         if(publicRecipe?.userId == null) return null
 
         publicRecipeDao?.addRecipe(publicRecipe.title,publicRecipe.ingredientsText,publicRecipe.preparationDescription, publicRecipe.picture, publicRecipe.cookingTime, publicRecipe.preparationTime, publicRecipe.userId, RecipeConverter.convertStringToDate(publicRecipe.creationDate), publicRecipe.portions)
@@ -58,6 +61,8 @@ class PublicRecipeService
         }
 
         return PublicRecipeDto(recipeId,publicRecipe.title,publicRecipe.ingredientsText,publicRecipe.preparationDescription,publicRecipe.picture,publicRecipe.cookingTime,publicRecipe.preparationTime,publicRecipe.userId,publicRecipe.creationDate,publicRecipe.portions,publicRecipe.ratingAvg,chapterDto,publicRecipe.recipeTag)
+        }
+        return null
     }
 
     /**
@@ -67,11 +72,13 @@ class PublicRecipeService
     fun deleteRecipe(id: Int) {
         val publicRecipe = publicRecipeDao?.findById(id)?.get()
         val auth : FirebaseAuthentication = SecurityContextHolder.getContext().authentication as FirebaseAuthentication
-        if(FirebaseAuth.getInstance().getUser(auth.principal as String).displayName == publicRecipe?.user?.userId)
+        val displayName = FirebaseAuth.getInstance().getUser(auth.principal as String).displayName
+        if(displayName == publicRecipe?.user?.userId || userDao?.isAdmin(displayName) == 1)
         {
-            deleteChapterWithIngredients(id)
-            deleteRecipeTagFromRecipe(id)
+            //deleteChapterWithIngredients(id)
+            //deleteRecipeTagFromRecipe(id)
             publicRecipeDao?.deleteById(id)
+            publicRecipeDao?.flush()
         }
     }
 
@@ -118,7 +125,7 @@ class PublicRecipeService
     fun search(title:Optional<String>, tags:Optional<List<String>>, ingredients:Optional<List<String>>,
                creationDate:Optional<Date>, page:Int, readCount:Int) : List<PublicRecipeDto>
     {
-        val t:String? = if(!title.isEmpty) '%' + title.get() + '%' else null
+        val t:String? = if(!title.isEmpty && title.get() != "") '%' + title.get() + '%' else null
         val tag:List<String>? = if(!tags.isEmpty) tags.get() else null
         val ingredient:List<String>? = if(!ingredients.isEmpty) ingredients.get() else null
         val date:Date? = if(!creationDate.isEmpty) creationDate.get() else null
@@ -170,9 +177,14 @@ class PublicRecipeService
      */
     private fun deleteChapterWithIngredients(recipeId:Int)
     {
+
         ingredientChapterDao?.getChapterIdsFromRecipe(recipeId)?.forEach{
             ingredientAmountDao?.deleteIngredientsFromChapter(it)
+            ingredientAmountDao?.flush()
+
             ingredientChapterDao?.deleteById(it)
+            ingredientChapterDao?.flush()
+
         }
 
     }
@@ -184,6 +196,7 @@ class PublicRecipeService
     private fun deleteRecipeTagFromRecipe(recipeId: Int) {
         recipeTagDao?.getRecipeTagsFromRecipe(recipeId)?.forEach {
             recipeTagDao?.delete(it)
+            recipeTagDao?.flush()
         }
     }
 
