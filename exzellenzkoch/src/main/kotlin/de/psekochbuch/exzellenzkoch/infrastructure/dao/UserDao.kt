@@ -34,4 +34,9 @@ interface UserDao : JpaRepository<User?,String?>, UserRepository
 
     @Query("SELECT user_Id FROM user WHERE user_Id REGEXP 'KochDummy([0-9]*)$' ORDER BY LENGTH(user_Id) DESC, user_Id DESC LIMIT 1", nativeQuery = true)
     fun getCountTmpUser() :String?
+
+    @Query("SELECT COUNT(user_Id) FROM user WHERE user_Id = (:id) AND isAdmin = 1", nativeQuery = true)
+    fun isAdmin(id: String?): Int
+
+
 }
