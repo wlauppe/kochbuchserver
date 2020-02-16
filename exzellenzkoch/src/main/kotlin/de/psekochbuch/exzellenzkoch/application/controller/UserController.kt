@@ -40,7 +40,7 @@ class UserController : UserApi
         return service?.checkUser(userId)
     }
 
-    override fun reportRecipe(id: String) {
+    override fun reportUser(id: String) {
         service?.reportUser(id)
     }
 

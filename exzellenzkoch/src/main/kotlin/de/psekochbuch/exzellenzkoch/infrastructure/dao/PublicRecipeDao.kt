@@ -49,6 +49,18 @@ interface PublicRecipeDao : JpaRepository<PublicRecipe?, Int?>, PublicRecipeRepo
     @Query("UPDATE public_recipe SET mark_as_Evil = 1 WHERE recipe_id = (:id)", nativeQuery = true)
     fun reportRecipe(id: Int)
 
+    /**
+     * Dereport a recipe with the specific id
+     * @param id Id of the recipe
+     */
     @Query( "UPDATE public_recipe SET mark_as_Evil = 0 WHERE recipe_id = (:id)", nativeQuery = true)
     fun deReportRecipe(id:Int)
+
+    /**
+     * Load the recipes from a user
+     * @param id Id of the user
+     * @return list of recipes from the user
+     */
+    @Query("SELECT * FROM public_recipe WHERE user_id = (:id)", nativeQuery = true)
+    fun getRecipesFromUser(id:String) : List<PublicRecipe>
 }

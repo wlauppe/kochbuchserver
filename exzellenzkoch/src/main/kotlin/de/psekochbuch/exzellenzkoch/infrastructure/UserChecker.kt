@@ -2,6 +2,7 @@ package de.psekochbuch.exzellenzkoch.infrastructure
 
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseToken
+import com.google.firebase.auth.UserRecord
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import de.psekochbuch.exzellenzkoch.application.dto.UserDto
@@ -28,6 +29,9 @@ object UserChecker
             databaseReference.child("user").push().setValue(UserDto(id,"", ""), DatabaseReference.CompletionListener { databaseError, databaseReference ->
                 //do nothing
             })
+            val update :UserRecord.UpdateRequest = UserRecord.UpdateRequest(token.uid)
+            update.setDisplayName(id)
+            FirebaseAuth.getInstance().updateUser(update)
         }
 
         userDao?.createUser(id, user.email, "")

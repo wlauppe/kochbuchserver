@@ -186,4 +186,13 @@ class PublicRecipeService
             recipeTagDao?.delete(it)
         }
     }
+
+    fun getUserRecipes(userId: String): List<PublicRecipeDto> {
+        val recipes:MutableList<PublicRecipeDto> = ArrayList()
+        publicRecipeDao?.getRecipesFromUser(userId)?.forEach {recipe ->
+            recipes.add(RecipeConverter.convertRecipeToDto(recipe,ingredientChapterDao,recipeTagDao,ingredientAmountDao))
+
+        }
+        return  recipes
+    }
 }

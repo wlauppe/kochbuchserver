@@ -15,6 +15,7 @@ interface UserApi {
      * POST-Request to create a new user
      * The URL ends with /api/users
      * @param userId The id of user to create
+     * @return the customertoken, witch is a token with claims
      */
     @PostMapping("/{userId}")
     fun createUser(@PathVariable userId:String) :CustomTokenDto?
@@ -22,7 +23,7 @@ interface UserApi {
     /**
      * POST-Request to create a new user
      * The URL ends with /api/users
-     * @param userId The id of user to create
+     * * @return the customertoken, witch is a token with claims
      */
     @PostMapping("/")
     fun createUser() :CustomTokenDto?
@@ -66,5 +67,5 @@ interface UserApi {
      * @param id Id of the user
      */
     @PostMapping("/report/{id}")
-    fun reportRecipe(@PathVariable(value = "id") id:String)
+    fun reportUser(@PathVariable(value = "id") id:String)
 }

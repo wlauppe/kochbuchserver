@@ -72,4 +72,11 @@ interface PublicRecipeApi {
     @PostMapping("/report/{id}")
     fun reportRecipe(@PathVariable(value = "id") id:Int)
 
+    /**
+     * Get recipes from user
+     * @return list of recipedtos
+     */
+    @GetMapping("/user/{userId}")
+    fun getUserRecipes(@PathVariable(value = "userId") userId : String) : List<PublicRecipeDto>?
+
 }

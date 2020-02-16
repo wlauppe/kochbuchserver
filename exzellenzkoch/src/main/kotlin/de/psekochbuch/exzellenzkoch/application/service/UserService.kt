@@ -31,44 +31,15 @@ class UserService {
 
     /**
      * Create an user on the DB and create a custom token with claims for the user
+     * @param userId The userid of the user
+     * @return return a customer token, which is a token with claims
      */
     fun createUser(userId: String) : CustomTokenDto? {
 
-        val fireAuth : FirebaseAuthentication = SecurityContextHolder.getContext().authentication as FirebaseAuthentication
+        val fireAuth: FirebaseAuthentication = SecurityContextHolder.getContext().authentication as FirebaseAuthentication
 
         return CustomTokenDto(UserChecker.createUser(fireAuth.credentials as FirebaseTokenHolder, userDao))
 
-        /*val auth : FirebaseAuth = FirebaseAuth.getInstance()
-        val claim : MutableMap<String, Any> = HashMap()
-        claim["normalUser"] = true
-
-        var id = ""
-        id = if(userId == "")
-        {
-            createUniqueUserId()
-        } else {
-            userId
-        }
-
-        userDao?.createUser(id, (fireAuth.credentials as FirebaseTokenHolder).email, "")
-
-        return CustomTokenDto(auth.createCustomToken(fireAuth.principal as String, claim))
-        //auth.setCustomUserClaims(fireAuth.principal as String, claim)*/
-    }
-
-    private fun createUniqueUserId(): String {
-        val dummy = userDao?.getCountTmpUser()
-        if(dummy != null)
-        {
-            return try {
-                val count = dummy.substring(0, "KochDummy".length).toInt()
-                "KochDummy" + (count + 1)
-
-            }catch (ex : NumberFormatException) {
-                ""
-            }
-        }
-        return ""
     }
 
     /**
@@ -110,6 +81,7 @@ class UserService {
         }
         return UserDto("", "", "")
     }
+
 
     private fun loadUser(userId:String) :Boolean {
         val done = CountDownLatch(1)

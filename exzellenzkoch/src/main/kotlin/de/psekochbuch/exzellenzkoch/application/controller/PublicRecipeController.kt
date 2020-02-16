@@ -77,5 +77,9 @@ class PublicRecipeController :PublicRecipeApi
         service?.reportRecipe(id)
     }
 
+    override fun getUserRecipes(userId: String): List<PublicRecipeDto>? {
+        return service?.getUserRecipes(userId)
+    }
+
 
 }
