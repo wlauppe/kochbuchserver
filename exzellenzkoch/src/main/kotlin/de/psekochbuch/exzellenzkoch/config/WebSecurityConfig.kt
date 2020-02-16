@@ -5,6 +5,7 @@ import de.psekochbuch.exzellenzkoch.security.JwtRequestFilter
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.http.HttpMethod
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
@@ -41,15 +42,22 @@ class WebSecurityConfig : WebSecurityConfigurerAdapter() {
 
     override fun configure(web: WebSecurity?) {
         super.configure(web)
-        web?.ignoring()?.antMatchers("/api/recipes/{id}")
-        web?.ignoring()?.antMatchers("/api/recipes")
-        web?.ignoring()?.antMatchers("/api/recipes/report/{id}")
         web?.ignoring()?.antMatchers("/api/images/{userId}/{imageName}")
-        web?.ignoring()?.antMatchers("/api/images")
-        web?.ignoring()?.antMatchers("/api/users/{userId}")
+
+        web?.ignoring()?.antMatchers(HttpMethod.GET,"/api/recipes/{id}")
+        web?.ignoring()?.antMatchers(HttpMethod.GET,"/api/recipes")
+        web?.ignoring()?.antMatchers("/api/recipes/report/{id}")
+        web?.ignoring()?.antMatchers("/api/recipes/user/{userId}")
+
+        //web?.ignoring()?.antMatchers("/api/images")
+        web?.ignoring()?.antMatchers(HttpMethod.POST,"/api/users/{userId}")
+        web?.ignoring()?.antMatchers(HttpMethod.POST,"api/users/")
+        web?.ignoring()?.antMatchers("/api/users/isAdmin")
+
+
         web?.ignoring()?.antMatchers("/api/users/report/{id}")
         web?.ignoring()?.antMatchers("/api/users/check/{userId}")
-        web?.ignoring()?.antMatchers("/api/recipes/user/{userId}")
+
     }
 
     /**
