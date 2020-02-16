@@ -1,11 +1,14 @@
 package de.psekochbuch.exzellenzkoch.application.service
 
+import com.google.firebase.auth.FirebaseAuth
 import de.psekochbuch.exzellenzkoch.application.dto.PublicRecipeDto
 import de.psekochbuch.exzellenzkoch.application.dto.UserDto
 import de.psekochbuch.exzellenzkoch.domain.model.PublicRecipe
 import de.psekochbuch.exzellenzkoch.domain.model.User
 import de.psekochbuch.exzellenzkoch.infrastructure.dao.*
+import de.psekochbuch.exzellenzkoch.security.firebase.FirebaseAuthentication
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -29,36 +32,48 @@ class AdminService {
 
     fun getReportedPublicRecipe(page: Int, readCount: Int) :List<PublicRecipeDto>
     {
-        val recipes:MutableList<PublicRecipeDto> = ArrayList()
-        publicRecipeDao?.getReportedRecipes(page,readCount)?.forEach {
-            if(it is PublicRecipe)
-            {
-                recipes.add(RecipeConverter.convertRecipeToDto(it,ingredientChapterDao,recipeTagDao,ingredientAmountDao))
+        val auth : FirebaseAuthentication = SecurityContextHolder.getContext().authentication as FirebaseAuthentication
+        if(userDao?.isAdmin(FirebaseAuth.getInstance().getUser(auth.principal as String).displayName) == 1) {
+            val recipes: MutableList<PublicRecipeDto> = ArrayList()
+            publicRecipeDao?.getReportedRecipes(page, readCount)?.forEach {
+                if (it is PublicRecipe) {
+                    recipes.add(RecipeConverter.convertRecipeToDto(it, ingredientChapterDao, recipeTagDao, ingredientAmountDao))
+                }
             }
+            return recipes
         }
-        return recipes
+        return emptyList()
     }
 
     fun getReportedUser(page: Int, readCount: Int): List<UserDto>
     {
-        val user:MutableList<UserDto> = ArrayList()
+        val auth : FirebaseAuthentication = SecurityContextHolder.getContext().authentication as FirebaseAuthentication
+        if(userDao?.isAdmin(FirebaseAuth.getInstance().getUser(auth.principal as String).displayName) == 1) {
+            val user: MutableList<UserDto> = ArrayList()
 
-        userDao?.getReportedUser(page,readCount)?.forEach {
-            if(it is User)
-            {
-                user.add(UserDto(it.userId,"",it.description))
+            userDao.getReportedUser(page, readCount)?.forEach {
+                if (it is User) {
+                    user.add(UserDto(it.userId, "", it.description))
+                }
             }
+            return user
         }
-        return user
+        return emptyList()
     }
 
     fun deReportPublicRecipe(recipeId: Int)
     {
-        publicRecipeDao?.deReportRecipe(recipeId)
+        val auth : FirebaseAuthentication = SecurityContextHolder.getContext().authentication as FirebaseAuthentication
+        if(userDao?.isAdmin(FirebaseAuth.getInstance().getUser(auth.principal as String).displayName) == 1) {
+            publicRecipeDao?.deReportRecipe(recipeId)
+        }
     }
 
     fun deReportUser(userId:String)
     {
-        userDao?.deReportUser(userId)
+        val auth : FirebaseAuthentication = SecurityContextHolder.getContext().authentication as FirebaseAuthentication
+        if(userDao?.isAdmin(FirebaseAuth.getInstance().getUser(auth.principal as String).displayName) == 1) {
+            userDao.deReportUser(userId)
+        }
     }
 }
