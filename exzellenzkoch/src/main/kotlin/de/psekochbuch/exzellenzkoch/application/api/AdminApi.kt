@@ -36,13 +36,13 @@ interface AdminApi {
      * @param recipeId Id of the recipe
      */
     @DeleteMapping("/reported/{recipeId}")
-    fun deReportPublicRecipe(@RequestParam("recipeId") recipeId:Int)
+    fun deReportPublicRecipe(@PathVariable("recipeId") recipeId:Int)
 
     /**
      * Set the report from user flag back
      * @param userId Id of the User
      */
-    @DeleteMapping("/reported/{userId}")
+    @DeleteMapping("/reported")
     fun deReportUser(@RequestParam("userId") userId:String)
 
 
