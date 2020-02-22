@@ -38,5 +38,8 @@ interface UserDao : JpaRepository<User?,String?>, UserRepository
     @Query("SELECT COUNT(user_Id) FROM user WHERE user_Id = (:id) AND isAdmin = 1", nativeQuery = true)
     fun isAdmin(id: String?): Int
 
+    @Query("INSERT INTO favourites (recipe_Id, user_Id) VALUES ((:recipeId), (:userId))", nativeQuery = true)
+    fun addFavourite(recipeId:Int, userId: String)
 
+    
 }
