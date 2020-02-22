@@ -1,5 +1,6 @@
 package de.psekochbuch.exzellenzkoch.infrastructure.dao
 
+import de.psekochbuch.exzellenzkoch.domain.model.PublicRecipe
 import de.psekochbuch.exzellenzkoch.domain.model.User
 import de.psekochbuch.exzellenzkoch.infrastructure.dao.custom.UserRepository
 import org.springframework.data.jpa.repository.JpaRepository
@@ -41,5 +42,6 @@ interface UserDao : JpaRepository<User?,String?>, UserRepository
     @Query("INSERT INTO favourites (recipe_Id, user_Id) VALUES ((:recipeId), (:userId))", nativeQuery = true)
     fun addFavourite(recipeId:Int, userId: String)
 
-    
+    @Query("DELETE FROM favourites WHERE WHERE user_Id = (:userId) AND recipe_Id = (:recipeId)", nativeQuery = true)
+    fun deleteFavourite(recipeId: Int, userId: String)
 }

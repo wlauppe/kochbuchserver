@@ -41,8 +41,8 @@ data class User(
         @ManyToMany(cascade = [ CascadeType.ALL ])
         @JoinTable(
                 name = "Favourites",
-                joinColumns = [JoinColumn(name = "userId")] ,
-                inverseJoinColumns = [JoinColumn(name = "recipeId")]
+                joinColumns = [JoinColumn(name = "user_Id")] ,
+                inverseJoinColumns = [JoinColumn(name = "recipe_Id")]
         )
         var favourites:List<PublicRecipe>,
 
