@@ -4,7 +4,12 @@ import de.psekochbuch.exzellenzkoch.application.api.FavouritesApi
 import de.psekochbuch.exzellenzkoch.application.dto.PublicRecipeDto
 import de.psekochbuch.exzellenzkoch.application.service.FavouritesService
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.web.bind.annotation.RestController
 
+/**
+ * Implementation from the FavouritesApi
+ */
+@RestController
 class FavouritesController : FavouritesApi {
 
     @Autowired

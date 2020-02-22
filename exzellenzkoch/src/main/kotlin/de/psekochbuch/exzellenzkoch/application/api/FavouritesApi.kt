@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.*
 /**
  * Interface for the api to handle favourites
  */
-@RequestMapping("api/users")
+@RequestMapping("/api/users")
 interface FavouritesApi
 {
     /**
@@ -27,9 +27,9 @@ interface FavouritesApi
      * @return The favourite recipes from an user
      */
     @GetMapping("/{userId}/favourites")
-    fun getFavRecipes(@PathVariable userId: String,
-                      @RequestParam("page") page:Int,
-                      @RequestParam("readCount") readCount:Int) :List<PublicRecipeDto>?
+    fun getFavRecipes(@PathVariable("userId") userId: String,
+                      @RequestParam("page", required = false) page:Int,
+                      @RequestParam("readCount", required = false) readCount:Int) :List<PublicRecipeDto>?
 
     /**
      * DELETE-Request to delete a favourite of an user
