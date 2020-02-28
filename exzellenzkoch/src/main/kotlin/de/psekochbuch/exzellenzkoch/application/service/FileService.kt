@@ -100,7 +100,7 @@ class FileService {
 
     /**
      * Delete an image of a recipe
-     * @param recipeId The id of the recipe
+     * @param userId The id of the user
      * @return Empty path
      */
     fun deleteImage(imageName: String, userId: String) : FileDto?
