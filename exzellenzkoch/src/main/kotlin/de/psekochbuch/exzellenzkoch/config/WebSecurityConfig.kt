@@ -51,6 +51,7 @@ class WebSecurityConfig : WebSecurityConfigurerAdapter() {
 
         //web?.ignoring()?.antMatchers("/api/images")
         web?.ignoring()?.antMatchers(HttpMethod.POST,"/api/users/{userId}")
+        web?.ignoring()?.antMatchers(HttpMethod.GET,"/api/users/{userId}")
         web?.ignoring()?.antMatchers(HttpMethod.POST,"api/users/")
         web?.ignoring()?.antMatchers("/api/users/isAdmin")
 
