@@ -2,19 +2,27 @@ package de.psekochbuch.exzellenzkoch
 
 //import org.junit.runner.RunWith
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseToken
+import com.google.firebase.auth.UserRecord
 import de.psekochbuch.exzellenzkoch.application.dto.IngredientChapterDto
 import de.psekochbuch.exzellenzkoch.application.dto.IngredientDto
 import de.psekochbuch.exzellenzkoch.application.dto.PublicRecipeDto
 import de.psekochbuch.exzellenzkoch.application.dto.RecipeTagDto
 import de.psekochbuch.exzellenzkoch.application.service.PublicRecipeService
 import de.psekochbuch.exzellenzkoch.infrastructure.dao.PublicRecipeDao
+import de.psekochbuch.exzellenzkoch.security.firebase.FirebaseAuthentication
+import de.psekochbuch.exzellenzkoch.security.firebase.FirebaseTokenHolder
 import org.assertj.core.api.Assertions
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.core.annotation.Order
 import org.springframework.http.MediaType
+import org.springframework.security.core.Authentication
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.MvcResult
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
@@ -46,12 +54,25 @@ class PublicRecipeTest {
     private val newRec = PublicRecipeDto(0, "Kuchen", "Test","Backe Backe Kuchen", "", 12,12,"Test","2019-12-31 00:00:00",4,0,
             listOf(IngredientChapterDto(0,"TestChapter", listOf(IngredientDto(0,"IngredientName", 9.0,"g")))), listOf(RecipeTagDto("TestTag")))
 
+    @BeforeAll
+    fun configureSecurity()
+    {
+        val user = FirebaseAuth.getInstance().getUser("5bVm22CPnkXLrPRla6THrM3BVoT2")
+        val token = user.userMetadata
+        val authenticationToken: Authentication = FirebaseAuthentication("5bVm22CPnkXLrPRla6THrM3BVoT2", FirebaseTokenHolder(decodedToken), null)
+        SecurityContextHolder.getContext().authentication = authenticationToken
+    }
+
     @Test
     @Order(1)
     fun addRecipe()
     {
+        //val userRecord = UserRecord
 
-        /*val json = asJsonString(newRec)
+
+
+
+        val json = asJsonString(newRec)
         val result : MvcResult = mvc?.perform(MockMvcRequestBuilders.post("/api/recipes").content(json).contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", token))?.andReturn() as MvcResult//andExpect(status().isOk)*/
 
