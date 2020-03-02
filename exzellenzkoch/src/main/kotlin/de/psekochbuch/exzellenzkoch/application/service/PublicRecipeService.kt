@@ -3,6 +3,7 @@ package de.psekochbuch.exzellenzkoch.application.service
 import com.google.firebase.auth.FirebaseAuth
 import de.psekochbuch.exzellenzkoch.application.dto.IngredientChapterDto
 import de.psekochbuch.exzellenzkoch.application.dto.PublicRecipeDto
+import de.psekochbuch.exzellenzkoch.domain.exceptions.ResourceNotFoundException
 import de.psekochbuch.exzellenzkoch.domain.model.IngredientChapter
 import de.psekochbuch.exzellenzkoch.domain.model.PublicRecipe
 import de.psekochbuch.exzellenzkoch.infrastructure.dao.*
@@ -12,6 +13,7 @@ import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.util.*
+import java.util.function.Supplier
 import kotlin.collections.ArrayList
 
 /**
@@ -34,8 +36,8 @@ class PublicRecipeService
      */
     fun getRecipe(id:Int) : PublicRecipeDto
     {
-        val recipe = publicRecipeDao?.findById(id)
-        return RecipeConverter.convertRecipeToDto(recipe?.get(), ingredientChapterDao, recipeTagDao, ingredientAmountDao)
+        val recipe = publicRecipeDao?.findById(id)?.orElseThrow(Supplier { ResourceNotFoundException("Recipe", "id", id) })
+        return RecipeConverter.convertRecipeToDto(recipe, ingredientChapterDao, recipeTagDao, ingredientAmountDao)
     }
 
     /**
