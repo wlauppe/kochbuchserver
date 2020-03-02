@@ -48,7 +48,7 @@ class UserService {
      */
     fun updateUser(user: UserDto, userId: String) {
         val fireAuth : FirebaseAuthentication = SecurityContextHolder.getContext().authentication as FirebaseAuthentication
-        if(userDao?.getUserIdByEmail((fireAuth.credentials as FirebaseTokenHolder).email) == userId) {
+        if(userDao?.getUserIdByEmail((fireAuth.credentials as FirebaseTokenHolder).email!!) == userId) {
             userDao?.findById(user.userId)?.map {dbUser ->
                 dbUser?.userId = user.userId
                 dbUser?.description = user.description
@@ -60,7 +60,7 @@ class UserService {
 
     fun deleteUser(userId: String) {
         val fireAuth : FirebaseAuthentication = SecurityContextHolder.getContext().authentication as FirebaseAuthentication
-        if (userDao?.getUserIdByEmail((fireAuth.credentials as FirebaseTokenHolder).email) == userId)
+        if (userDao?.getUserIdByEmail((fireAuth.credentials as FirebaseTokenHolder).email!!) == userId)
         {
             userDao?.deleteById(userId)
         }

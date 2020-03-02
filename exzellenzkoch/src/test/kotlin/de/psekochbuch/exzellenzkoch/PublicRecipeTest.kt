@@ -2,6 +2,7 @@ package de.psekochbuch.exzellenzkoch
 
 //import org.junit.runner.RunWith
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.google.firebase.auth.FirebaseAuth
 import de.psekochbuch.exzellenzkoch.application.controller.PublicRecipeController
 import de.psekochbuch.exzellenzkoch.application.dto.IngredientChapterDto
@@ -11,14 +12,14 @@ import de.psekochbuch.exzellenzkoch.application.dto.RecipeTagDto
 import de.psekochbuch.exzellenzkoch.infrastructure.dao.PublicRecipeDao
 import de.psekochbuch.exzellenzkoch.security.firebase.FirebaseAuthentication
 import de.psekochbuch.exzellenzkoch.security.firebase.FirebaseTokenHolder
+import org.aspectj.lang.annotation.Before
+import org.assertj.core.api.Assert
 import org.assertj.core.api.Assertions
-import org.junit.Assert
-import org.junit.BeforeClass
-import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.core.annotation.Order
+
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.test.web.servlet.MockMvc
@@ -31,6 +32,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 //@RunWith(SpringRunner::class)
 //@DataJpaTest
 @AutoConfigureMockMvc
+@TestMethodOrder(MethodOrderer.OrderAnnotation::class)
 class PublicRecipeTest {
 
     @Autowired
@@ -44,19 +46,22 @@ class PublicRecipeTest {
     @Autowired
     private val mvc :MockMvc? = null
 
-    private var id:Int = 0
+    companion object {
+        private var id: Int = 0
 
-    private val newRec = PublicRecipeDto(0, "Kuchen", "Test","Backe Backe Kuchen", "", 12,12,"Test","2019-12-31 00:00:00",4,0,
-            listOf(IngredientChapterDto(0,"TestChapter", listOf(IngredientDto(0,"IngredientName", 9.0,"g")))), listOf(RecipeTagDto("TestTag")))
+        private val newRec = PublicRecipeDto(0, "Salat", "#Zutaten:\n200 g Eisbergsalat\n50 g Tomaten\n70 g Mais","Man wirft alles in eine Schüssel", "", 12,12,"Test","2019-12-31 00:00:00",4,0,
+                listOf(IngredientChapterDto(0,"Zutaten", listOf(IngredientDto(0,"Eisbergsalat", 200.0,"g"), IngredientDto(0,"Tomaten", 50.0, "g"), IngredientDto(0, "Mais", 70.0,"g")))), listOf(RecipeTagDto("Salat")))
+    }
 
-    @BeforeClass
-    fun configureSecurity()
-    {
+
+    @BeforeEach
+    fun configureSecurity() {
         val user = FirebaseAuth.getInstance().getUser("5bVm22CPnkXLrPRla6THrM3BVoT2")
         val token = user.userMetadata
         val authenticationToken: Authentication = FirebaseAuthentication("5bVm22CPnkXLrPRla6THrM3BVoT2", FirebaseTokenHolder(null, user), null)
         SecurityContextHolder.getContext().authentication = authenticationToken
     }
+    
 
     @Test
     @Order(1)
@@ -88,12 +93,13 @@ class PublicRecipeTest {
     @Order(2)
     fun getRecipe()
     {
-        val result : MvcResult = mvc?.perform(MockMvcRequestBuilders.get("/api/recipes"))?.andReturn() as MvcResult
+        val result : MvcResult = mvc?.perform(MockMvcRequestBuilders.get("/api/recipes/$id"))?.andReturn() as MvcResult
 
         if(id != 0) {
-            val getRec = asJsonObject(result.response.contentAsString) as PublicRecipeDto
+            val conv = asJsonObject(result.response.contentAsString)
+            val getRec =  conv as PublicRecipeDto
             val recipe = publicRecipeController?.getRecipe(id)
-            Assertions.assertThat(newRec == getRec)
+            Assertions.assertThat(recipe == getRec)
         }
     }
 
@@ -103,10 +109,10 @@ class PublicRecipeTest {
     {
         if(newRec.id != 0)
         {
-            newRec.title = "neuerTitel"
+            newRec.title = "Eisbergsalat"
             publicRecipeController?.updateRecipe(newRec,newRec.id)
             val updatedRec = publicRecipeController?.getRecipe(newRec.id)
-            Assert.assertEquals(newRec,updatedRec)
+            org.junit.jupiter.api.Assertions.assertEquals(newRec.title, updatedRec?.title)
         }
     }
 
@@ -114,15 +120,24 @@ class PublicRecipeTest {
     @Order(4)
     fun deleteRecipe()
     {
-        if(newRec.id != 0)
-        {
+        if(newRec.id != 0) {
             publicRecipeController?.deleteRecipe(newRec.id)
-            val delRec = publicRecipeController?.getRecipe(newRec.id)
-            Assert.assertNull(delRec)
+
+            org.junit.jupiter.api.Assertions.assertThrows(de.psekochbuch.exzellenzkoch.domain.exceptions.ResourceNotFoundException::class.java) {
+                publicRecipeController?.getRecipe(newRec.id)
+            }
+
+            //org.junit.jupiter.api.Assertions.assertNull(delRec)
         }
     }
 
-
+    @Test
+    @Order(5)
+    fun searchTitle()
+    {
+        val result : MvcResult = mvc?.perform(MockMvcRequestBuilders.get("/api/recipes?title=Test&page=1&readCount=10"))?.andReturn() as MvcResult
+        val recipes = asJsonObject(result.response.contentAsString)
+    }
 
     private fun asJsonString(obj: Any?): String {
         return try {
@@ -133,10 +148,11 @@ class PublicRecipeTest {
         }
     }
 
-    private fun asJsonObject(obj: String): Any {
+    private fun asJsonObject(obj: String): PublicRecipeDto {
         return try {
             val mapper = ObjectMapper()
-            mapper.readValue(obj, Any::class.java)
+            mapper.registerModule(KotlinModule())
+            mapper.readValue(obj, PublicRecipeDto::class.java)
         } catch (e: Exception) {
             throw RuntimeException(e)
         }
