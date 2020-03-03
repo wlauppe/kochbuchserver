@@ -1,6 +1,7 @@
 package de.psekochbuch.exzellenzkoch
 
 //import org.junit.runner.RunWith
+
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.google.firebase.auth.FirebaseAuth
@@ -12,14 +13,10 @@ import de.psekochbuch.exzellenzkoch.application.dto.RecipeTagDto
 import de.psekochbuch.exzellenzkoch.infrastructure.dao.PublicRecipeDao
 import de.psekochbuch.exzellenzkoch.security.firebase.FirebaseAuthentication
 import de.psekochbuch.exzellenzkoch.security.firebase.FirebaseTokenHolder
-import org.aspectj.lang.annotation.Before
-import org.assertj.core.api.Assert
-import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
-
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.test.web.servlet.MockMvc
@@ -51,6 +48,8 @@ class PublicRecipeTest {
 
         private val newRec = PublicRecipeDto(0, "Salat", "#Zutaten:\n200 g Eisbergsalat\n50 g Tomaten\n70 g Mais","Man wirft alles in eine Schüssel", "", 12,12,"Test","2019-12-31 00:00:00",4,0,
                 listOf(IngredientChapterDto(0,"Zutaten", listOf(IngredientDto(0,"Eisbergsalat", 200.0,"g"), IngredientDto(0,"Tomaten", 50.0, "g"), IngredientDto(0, "Mais", 70.0,"g")))), listOf(RecipeTagDto("Salat")))
+
+        private val searchRecipes = ArrayList<PublicRecipeDto>()
     }
 
 
@@ -76,10 +75,10 @@ class PublicRecipeTest {
         //result.response.status
         //val recipe :PublicRecipeDto = asJsonObject(result.response.contentAsString) as PublicRecipeDto
         if(recipe != null) {
-            Assertions.assertThat(recipe.id).isGreaterThan(0)
+            Assertions.assertTrue(recipe.id > 0)
             newRec.id = recipe.id
             id = recipe.id
-            Assertions.assertThat(newRec == recipe)
+            Assertions.assertEquals(newRec , recipe)
         } else
         {
             Assertions.fail("Recipe could not created")
@@ -96,10 +95,11 @@ class PublicRecipeTest {
         val result : MvcResult = mvc?.perform(MockMvcRequestBuilders.get("/api/recipes/$id"))?.andReturn() as MvcResult
 
         if(id != 0) {
-            val conv = asJsonObject(result.response.contentAsString)
-            val getRec =  conv as PublicRecipeDto
-            val recipe = publicRecipeController?.getRecipe(id)
-            Assertions.assertThat(recipe == getRec)
+            val loadRec = asJsonObject(result.response.contentAsString, PublicRecipeDto::class.java)
+            if (loadRec is PublicRecipeDto) {
+                val recipe = publicRecipeController?.getRecipe(id)
+                Assertions.assertEquals(recipe, loadRec)
+            }
         }
     }
 
@@ -136,7 +136,54 @@ class PublicRecipeTest {
     fun searchTitle()
     {
         val result : MvcResult = mvc?.perform(MockMvcRequestBuilders.get("/api/recipes?title=Test&page=1&readCount=10"))?.andReturn() as MvcResult
-        val recipes = asJsonObject(result.response.contentAsString)
+
+        var recipes = asJsonArrayObject(result.response.contentAsString, Array<PublicRecipeDto>::class.java)
+
+        if(recipes is Array<*>)
+        {
+            recipes = recipes.toList()
+            recipes.forEach {
+                if (it is PublicRecipeDto) {
+                    Assertions.assertTrue(it.title.matches(Regex("(?i:(.)*(Test).*)")))
+                } else {
+                    Assertions.fail("Did not load recipes")
+                }
+            }
+        } else {
+            Assertions.fail("Did not load recipes")
+        }
+
+        //recipes.
+        //org.junit.jupiter.api.Assertions.assertTrue(Rege)
+    }
+
+    @Test
+    @Order(6)
+    fun searchIngredient()
+    {
+        val result : MvcResult = mvc?.perform(MockMvcRequestBuilders.get("/api/recipes?title=&tags=&ingredients=Eier&ingredients=Nudeln&ingredients=Salz&page=1&readCount=10"))?.andReturn() as MvcResult
+
+        var recipes = asJsonArrayObject(result.response.contentAsString, Array<PublicRecipeDto>::class.java)
+
+        if(recipes is Array<*>)
+        {
+            recipes = recipes.toList()
+            recipes.forEach { recipeItem ->
+                if(recipeItem is PublicRecipeDto)
+                {
+                    var isCorrect = false
+                    recipeItem.ingredientsChapter?.forEach {chapter ->
+                        chapter.ingredient?.forEach {ingredient->
+                            if(ingredient.nameIngredient == "Nudeln" || ingredient.nameIngredient == "Eier" || ingredient.nameIngredient == "Salz")
+                            {
+                                isCorrect = true
+                            }
+                        }
+                    }
+                    Assertions.assertTrue(isCorrect)
+                }
+            }
+        }
     }
 
     private fun asJsonString(obj: Any?): String {
@@ -148,11 +195,22 @@ class PublicRecipeTest {
         }
     }
 
-    private fun asJsonObject(obj: String): PublicRecipeDto {
+    private fun asJsonObject(obj: String, type: Class<out Any>): Any {
         return try {
             val mapper = ObjectMapper()
             mapper.registerModule(KotlinModule())
-            mapper.readValue(obj, PublicRecipeDto::class.java)
+            mapper.readValue(obj, type)
+        } catch (e: Exception) {
+            throw RuntimeException(e)
+        }
+    }
+
+    private fun asJsonArrayObject(obj: String, type:Class<out Any>): Any {
+        return try {
+            val mapper = ObjectMapper()
+            mapper.registerModule(KotlinModule())
+            mapper.readValue(obj, type)
+            //listOf(mapper.readValue(obj, type))
         } catch (e: Exception) {
             throw RuntimeException(e)
         }
