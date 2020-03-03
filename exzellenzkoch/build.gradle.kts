@@ -49,8 +49,8 @@ dependencies {
 	testImplementation("org.springframework.security:spring-security-test")
 
 	//JUnit Test
-	testImplementation ("org.junit.jupiter:junit-jupiter-api:5.3.1")
-	testRuntimeOnly ("org.junit.jupiter:junit-jupiter-engine:5.3.1")
+	testImplementation ("org.junit.jupiter:junit-jupiter-api:5.5.1")
+	testRuntimeOnly ("org.junit.jupiter:junit-jupiter-engine:5.5.1")
 
 	//Firebase
 	implementation ("com.google.firebase:firebase-admin:6.11.0")
