@@ -1,6 +1,7 @@
 package de.psekochbuch.exzellenzkoch.application.service
 
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.UserRecord
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
@@ -39,7 +40,7 @@ class UserService {
 
         val fireAuth: FirebaseAuthentication = SecurityContextHolder.getContext().authentication as FirebaseAuthentication
 
-        return CustomTokenDto(UserChecker.createUser(fireAuth.credentials as FirebaseTokenHolder, userDao))
+        return CustomTokenDto(UserChecker.createUser(fireAuth.principal as String, userDao))
 
     }
 
@@ -53,6 +54,9 @@ class UserService {
                 dbUser?.userId = user.userId
                 dbUser?.description = user.description
                 if(dbUser != null) userDao?.save(dbUser)
+            }
+            if(userId != user.userId) {
+                updateFirebaseDisplayName(fireAuth.principal as String, user.userId)
             }
         }
 
@@ -125,5 +129,10 @@ class UserService {
         return AdminDto(false)
     }
 
-
+    private fun updateFirebaseDisplayName(uId:String ,userId:String)
+    {
+        val update : UserRecord.UpdateRequest = UserRecord.UpdateRequest(uId)
+        update.setDisplayName(userId)
+        FirebaseAuth.getInstance().updateUser(update)
+    }
 }
