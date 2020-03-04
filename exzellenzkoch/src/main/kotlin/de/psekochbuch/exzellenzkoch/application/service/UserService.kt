@@ -9,6 +9,7 @@ import com.google.firebase.database.ValueEventListener
 import de.psekochbuch.exzellenzkoch.application.dto.AdminDto
 import de.psekochbuch.exzellenzkoch.application.dto.CustomTokenDto
 import de.psekochbuch.exzellenzkoch.application.dto.UserDto
+import de.psekochbuch.exzellenzkoch.domain.exceptions.ResourceNotFoundException
 import de.psekochbuch.exzellenzkoch.infrastructure.UserChecker
 import de.psekochbuch.exzellenzkoch.infrastructure.dao.UserDao
 import de.psekochbuch.exzellenzkoch.security.firebase.FirebaseAuthentication
@@ -72,9 +73,10 @@ class UserService {
 
     fun getUser(userId: String): UserDto? {
 
-        var user :UserDto? = UserDto("", description = "")
-        userDao?.findById(userId)?.map { dbUser ->
-            user = UserDto(dbUser!!.userId, description = dbUser.description)
+        var user :UserDto? = UserDto("", "", "")
+        val userDb =  userDao?.findById(userId)?.orElseThrow { ResourceNotFoundException("User", "id", userId) }
+        if (userDb != null) {
+            user = UserDto(userDb.userId, "", userDb.description)
         }
         return user
     }
