@@ -123,7 +123,7 @@ class PublicRecipeTest {
         if(newRec.id != 0) {
             publicRecipeController?.deleteRecipe(newRec.id)
 
-            org.junit.jupiter.api.Assertions.assertThrows(de.psekochbuch.exzellenzkoch.domain.exceptions.ResourceNotFoundException::class.java) {
+            Assertions.assertThrows(de.psekochbuch.exzellenzkoch.domain.exceptions.ResourceNotFoundException::class.java) {
                 publicRecipeController?.getRecipe(newRec.id)
             }
 

@@ -8,6 +8,7 @@ import com.google.firebase.database.*
 import de.psekochbuch.exzellenzkoch.application.controller.UserController
 import de.psekochbuch.exzellenzkoch.application.dto.CustomTokenDto
 import de.psekochbuch.exzellenzkoch.application.dto.UserDto
+import de.psekochbuch.exzellenzkoch.domain.exceptions.ResourceNotFoundException
 import de.psekochbuch.exzellenzkoch.infrastructure.UserChecker
 import de.psekochbuch.exzellenzkoch.infrastructure.dao.PublicRecipeDao
 import de.psekochbuch.exzellenzkoch.infrastructure.dao.RecipeTagDao
@@ -133,11 +134,12 @@ class UserTest {
 
     @Test
     @Order(7)
-    fun deleteUser()
-    {
-
-            userController?.deleteUser("NeuTest")
-            updateFirebaseDisplayName("")
+    fun deleteUser() {
+        userController?.deleteUser("NeuTest")
+        updateFirebaseDisplayName("")
+        Assertions.assertThrows(ResourceNotFoundException::class.java) {
+            val result: MvcResult = mvc?.perform(MockMvcRequestBuilders.get("/api/users/TestUser"))?.andReturn() as MvcResult
+        }
 
     }
 
