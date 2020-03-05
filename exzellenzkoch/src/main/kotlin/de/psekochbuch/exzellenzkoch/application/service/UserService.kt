@@ -46,16 +46,15 @@ class UserService {
     }
 
     /**
-     * Update an user with the new 
+     * Update an user with the new values
+     * @param user The user to update
+     * @param userId The old id of the user
      */
     fun updateUser(user: UserDto, userId: String) {
         val fireAuth : FirebaseAuthentication = SecurityContextHolder.getContext().authentication as FirebaseAuthentication
-        if(userDao?.getUserIdByEmail((fireAuth.credentials as FirebaseTokenHolder).email!!) == userId) {
-            userDao?.findById(user.userId)?.map {dbUser ->
-                dbUser?.userId = user.userId
-                dbUser?.description = user.description
-                if(dbUser != null) userDao?.save(dbUser)
-            }
+        if(userDao?.getUserIdByEmail(FirebaseAuth.getInstance().getUser(fireAuth.principal as String).email!!) == userId) {
+            userDao?.updateUser(user.userId, userId, user.description)
+
             if(userId != user.userId) {
                 updateFirebaseDisplayName(fireAuth.principal as String, user.userId)
             }
@@ -65,7 +64,7 @@ class UserService {
 
     fun deleteUser(userId: String) {
         val fireAuth : FirebaseAuthentication = SecurityContextHolder.getContext().authentication as FirebaseAuthentication
-        if (userDao?.getUserIdByEmail((fireAuth.credentials as FirebaseTokenHolder).email!!) == userId)
+        if (userDao?.getUserIdByEmail(FirebaseAuth.getInstance().getUser(fireAuth.principal as String).email!!) == userId)
         {
             userDao?.deleteById(userId)
         }
@@ -82,11 +81,20 @@ class UserService {
     }
 
     fun checkUser(userId: String): UserDto? {
-        if(loadUser(userId))
+        if(loadUser(userId) || checkDbUserExist(userId))
         {
             return UserDto(userId, "","")
         }
         return UserDto("", "", "")
+    }
+
+    private fun checkDbUserExist(userId: String): Boolean {
+        val exist = userDao?.existsById(userId);
+
+        if(exist != null) {
+            return exist
+        }
+        return true
     }
 
 
