@@ -15,16 +15,21 @@ import de.psekochbuch.exzellenzkoch.infrastructure.dao.RecipeTagDao
 import de.psekochbuch.exzellenzkoch.infrastructure.dao.UserDao
 import de.psekochbuch.exzellenzkoch.security.firebase.FirebaseAuthentication
 import de.psekochbuch.exzellenzkoch.security.firebase.FirebaseTokenHolder
+import org.apache.http.HttpStatus
 import org.junit.jupiter.api.*
+import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.MvcResult
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 
+@ExtendWith(SpringExtension::class)
 @SpringBootTest
 @AutoConfigureMockMvc
 @TestMethodOrder(MethodOrderer.OrderAnnotation::class)
@@ -54,6 +59,7 @@ class UserTest {
         val userToken :CustomTokenDto? = userController?.createUser()
         Assertions.assertNotNull(userToken?.customToken)
         val user = FirebaseAuth.getInstance().getUser("XciGvAb8deP5qwVlOnM9mco0a073")
+        Assertions.assertNotEquals("", user.displayName)
         val dbUser = userDao?.findById(user.displayName)
         Assertions.assertNotNull(dbUser?.get())
 
@@ -90,11 +96,13 @@ class UserTest {
     @Order(3)
     fun createUserWithId()
     {
+        updateFirebaseDisplayName("TestUser")
         val userToken: CustomTokenDto? = userController?.createUser("TestUser")
         Assertions.assertNotNull(userToken?.customToken)
         val user = FirebaseAuth.getInstance().getUser("XciGvAb8deP5qwVlOnM9mco0a073")
         val dbUser = userDao?.findById(user.displayName)
         Assertions.assertNotNull(dbUser?.get())
+        Assertions.assertEquals("TestUser", dbUser?.get()?.userId )
 
     }
 
@@ -137,13 +145,13 @@ class UserTest {
     fun deleteUser() {
         userController?.deleteUser("NeuTest")
         updateFirebaseDisplayName("")
-        Assertions.assertThrows(ResourceNotFoundException::class.java) {
+
             val result: MvcResult = mvc?.perform(MockMvcRequestBuilders.get("/api/users/TestUser"))?.andReturn() as MvcResult
-        }
+        Assertions.assertEquals(HttpStatus.SC_NOT_FOUND, result.response.status)
 
     }
 
-    @Test
+
     @Order(8)
     fun getFavFromUser()
     {
