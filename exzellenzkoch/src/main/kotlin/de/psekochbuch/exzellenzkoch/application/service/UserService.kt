@@ -1,6 +1,7 @@
 package de.psekochbuch.exzellenzkoch.application.service
 
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.UserRecord
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
@@ -8,6 +9,7 @@ import com.google.firebase.database.ValueEventListener
 import de.psekochbuch.exzellenzkoch.application.dto.AdminDto
 import de.psekochbuch.exzellenzkoch.application.dto.CustomTokenDto
 import de.psekochbuch.exzellenzkoch.application.dto.UserDto
+import de.psekochbuch.exzellenzkoch.domain.exceptions.ResourceNotFoundException
 import de.psekochbuch.exzellenzkoch.infrastructure.UserChecker
 import de.psekochbuch.exzellenzkoch.infrastructure.dao.UserDao
 import de.psekochbuch.exzellenzkoch.security.firebase.FirebaseAuthentication
@@ -39,20 +41,22 @@ class UserService {
 
         val fireAuth: FirebaseAuthentication = SecurityContextHolder.getContext().authentication as FirebaseAuthentication
 
-        return CustomTokenDto(UserChecker.createUser(fireAuth.credentials as FirebaseTokenHolder, userDao))
+        return CustomTokenDto(UserChecker.createUser(fireAuth.principal as String, userDao))
 
     }
 
     /**
-     * Update an user with the new 
+     * Update an user with the new values
+     * @param user The user to update
+     * @param userId The old id of the user
      */
     fun updateUser(user: UserDto, userId: String) {
         val fireAuth : FirebaseAuthentication = SecurityContextHolder.getContext().authentication as FirebaseAuthentication
-        if(userDao?.getUserIdByEmail((fireAuth.credentials as FirebaseTokenHolder).email) == userId) {
-            userDao?.findById(user.userId)?.map {dbUser ->
-                dbUser?.userId = user.userId
-                dbUser?.description = user.description
-                if(dbUser != null) userDao?.save(dbUser)
+        if(userDao?.getUserIdByEmail(FirebaseAuth.getInstance().getUser(fireAuth.principal as String).email!!) == userId) {
+            userDao?.updateUser(user.userId, userId, user.description)
+
+            if(userId != user.userId) {
+                updateFirebaseDisplayName(fireAuth.principal as String, user.userId)
             }
         }
 
@@ -60,7 +64,7 @@ class UserService {
 
     fun deleteUser(userId: String) {
         val fireAuth : FirebaseAuthentication = SecurityContextHolder.getContext().authentication as FirebaseAuthentication
-        if (userDao?.getUserIdByEmail((fireAuth.credentials as FirebaseTokenHolder).email) == userId)
+        if (userDao?.getUserIdByEmail(FirebaseAuth.getInstance().getUser(fireAuth.principal as String).email!!) == userId)
         {
             userDao?.deleteById(userId)
         }
@@ -68,19 +72,29 @@ class UserService {
 
     fun getUser(userId: String): UserDto? {
 
-        var user :UserDto? = UserDto("", description = "")
-        userDao?.findById(userId)?.map { dbUser ->
-            user = UserDto(dbUser!!.userId, description = dbUser.description)
+        var user :UserDto? = UserDto("", "", "")
+        val userDb =  userDao?.findById(userId)?.orElseThrow { ResourceNotFoundException("User", "id", userId) }
+        if (userDb != null) {
+            user = UserDto(userDb.userId, "", userDb.description)
         }
         return user
     }
 
     fun checkUser(userId: String): UserDto? {
-        if(loadUser(userId))
+        if(loadUser(userId) || checkDbUserExist(userId))
         {
             return UserDto(userId, "","")
         }
         return UserDto("", "", "")
+    }
+
+    private fun checkDbUserExist(userId: String): Boolean {
+        val exist = userDao?.existsById(userId);
+
+        if(exist != null) {
+            return exist
+        }
+        return true
     }
 
 
@@ -125,5 +139,10 @@ class UserService {
         return AdminDto(false)
     }
 
-
+    private fun updateFirebaseDisplayName(uId:String ,userId:String)
+    {
+        val update : UserRecord.UpdateRequest = UserRecord.UpdateRequest(uId)
+        update.setDisplayName(userId)
+        FirebaseAuth.getInstance().updateUser(update)
+    }
 }

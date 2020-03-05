@@ -2,40 +2,41 @@ package de.psekochbuch.exzellenzkoch.security.firebase
 
 import com.google.api.client.util.ArrayMap
 import com.google.firebase.auth.FirebaseToken
+import com.google.firebase.auth.UserRecord
 import java.util.ArrayList
 
 /**
  * Holder for Information about an registered user
  */
-class FirebaseTokenHolder(private val token: FirebaseToken) {
+class FirebaseTokenHolder(private val token: FirebaseToken?, val user:UserRecord) {
     /**
      * Returns the email of the user
      */
-    val email: String
-        get() = token.email
+    val email: String?
+        get() = token?.email
 
     /**
      * Returns the Issuer for the this token.
      */
-    val issuer: String
-        get() = token.issuer
+    val issuer: String?
+        get() = token?.issuer
 
     /**
      * Returns the user's display name.
      */
-    val name: String
-        get() = token.name
+    val name: String?
+        get() = token?.name
 
     /**
      * Returns the name of the user
      */
-    val uid: String
-        get() = token.uid
+    val uid: String?
+        get() = token?.uid
 
-    val isAdmin: Boolean
-        get() = equals(token.claims["admin"])
+    val isAdmin: Boolean?
+        get() = equals(token!!.claims["admin"])
 
     val googleId: String?
-        get() = (((token.claims["firebase"] as ArrayMap<*, *>)["identities"] as ArrayMap<*, *>?)!!["google.com"] as ArrayList<String?>?)!![0]
+        get() = (((token!!.claims["firebase"] as ArrayMap<*, *>)["identities"] as ArrayMap<*, *>?)!!["google.com"] as ArrayList<String?>?)!![0]
 
 }

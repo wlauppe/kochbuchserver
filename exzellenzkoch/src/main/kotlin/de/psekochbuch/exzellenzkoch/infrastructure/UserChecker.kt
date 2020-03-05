@@ -12,13 +12,13 @@ import org.springframework.beans.factory.annotation.Autowired
 
 object UserChecker
 {
-    fun createUser(token:FirebaseTokenHolder, userDao: UserDao?) : String
+    fun createUser(uid:String, userDao: UserDao?) : String
     {
         val auth : FirebaseAuth = FirebaseAuth.getInstance()
         val claim : MutableMap<String, Any> = HashMap()
         claim["normalUser"] = true
 
-        val user = auth.getUser(token.uid)
+        val user = auth.getUser(uid)
 
 
         var id = user.displayName
@@ -29,7 +29,7 @@ object UserChecker
             databaseReference.child("user").push().setValue(UserDto(id,"", ""), DatabaseReference.CompletionListener { databaseError, databaseReference ->
                 //do nothing
             })
-            val update :UserRecord.UpdateRequest = UserRecord.UpdateRequest(token.uid)
+            val update :UserRecord.UpdateRequest = UserRecord.UpdateRequest(uid)
             update.setDisplayName(id)
             FirebaseAuth.getInstance().updateUser(update)
         }
@@ -45,7 +45,7 @@ object UserChecker
         {
             return try {
                 var count = 0
-                if(dummy != "KochDummy") count = dummy.substring(0, "KochDummy".length).toInt()
+                if(dummy != "KochDummy") count = dummy.substring("KochDummy".length, dummy.length).toInt()
                 "KochDummy" + (count + 1)
 
             }catch (ex : NumberFormatException) {
