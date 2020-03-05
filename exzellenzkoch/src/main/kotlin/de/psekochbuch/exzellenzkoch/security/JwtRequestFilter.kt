@@ -51,8 +51,9 @@ class JwtRequestFilter : OncePerRequestFilter() {
                 }
                 chain.doFilter(request, response)
     }
+}
 
-    private fun checkIsAuth(decodedToken:FirebaseToken, uri:String, method:String) : Boolean {
+    /*private fun checkIsAuth(decodedToken:FirebaseToken, uri:String, method:String) : Boolean {
         //Check user
         if(uri.matches(Regex("/api/users/report/*")))    return true
         if(uri.matches(Regex("/api/users/\\w+")) && method == "GET") return true
@@ -80,4 +81,4 @@ class JwtRequestFilter : OncePerRequestFilter() {
         if(uri.matches(Regex("/api/images*"))) return equals(decodedToken.claims["normalUser"])
         return false
     }
-}
+*/
