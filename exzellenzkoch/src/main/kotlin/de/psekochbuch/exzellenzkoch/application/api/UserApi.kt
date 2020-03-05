@@ -33,7 +33,7 @@ interface UserApi {
      * PUT-Request to update an user
      * The URL ends with /api/users/{userId}
      * @param user The user to update
-     * @param userId The id of the user
+     * @param userId The old id of the user
      */
     @PutMapping("/{userId}")
     fun updateUser(@Valid @RequestBody user:UserDto, @PathVariable userId: String)
