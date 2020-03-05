@@ -14,17 +14,22 @@ import de.psekochbuch.exzellenzkoch.infrastructure.dao.PublicRecipeDao
 import de.psekochbuch.exzellenzkoch.security.firebase.FirebaseAuthentication
 import de.psekochbuch.exzellenzkoch.security.firebase.FirebaseTokenHolder
 import org.junit.jupiter.api.*
+import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.test.context.ContextConfiguration
+import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.MvcResult
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 
 
 //@TestPropertySource(locations = ["classpath:test.properties"])
+@ExtendWith(SpringExtension::class)
 @SpringBootTest
 //@RunWith(SpringRunner::class)
 //@DataJpaTest
@@ -46,7 +51,7 @@ class PublicRecipeTest {
     companion object {
         private var id: Int = 0
 
-        private val newRec = PublicRecipeDto(0, "Salat", "#Zutaten:\n200 g Eisbergsalat\n50 g Tomaten\n70 g Mais","Man wirft alles in eine Schüssel", "", 12,12,"Test","2019-12-31 00:00:00",4,0,
+        private val newRec = PublicRecipeDto(0, "Salat", "#Zutaten:\n200 g Eisbergsalat\n50 g Tomaten\n70 g Mais","Man wirft alles in eine Schüssel", "", 12,12,"test2","2019-12-31 00:00:00",4,0,
                 listOf(IngredientChapterDto(0,"Zutaten", listOf(IngredientDto(0,"Eisbergsalat", 200.0,"g"), IngredientDto(0,"Tomaten", 50.0, "g"), IngredientDto(0, "Mais", 70.0,"g")))), listOf(RecipeTagDto("Salat")))
 
         private val searchRecipes = ArrayList<PublicRecipeDto>()
@@ -55,9 +60,9 @@ class PublicRecipeTest {
 
     @BeforeEach
     fun configureSecurity() {
-        val user = FirebaseAuth.getInstance().getUser("5bVm22CPnkXLrPRla6THrM3BVoT2")
+        val user = FirebaseAuth.getInstance().getUser("ZVQtHQgMTYf1ZrbLQqQJbgFnZm03")
         val token = user.userMetadata
-        val authenticationToken: Authentication = FirebaseAuthentication("5bVm22CPnkXLrPRla6THrM3BVoT2", FirebaseTokenHolder(null, user), null)
+        val authenticationToken: Authentication = FirebaseAuthentication("ZVQtHQgMTYf1ZrbLQqQJbgFnZm03", FirebaseTokenHolder(null, user), null)
         SecurityContextHolder.getContext().authentication = authenticationToken
     }
     
