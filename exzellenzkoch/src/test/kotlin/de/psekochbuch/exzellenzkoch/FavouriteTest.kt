@@ -71,12 +71,8 @@ class FavouriteTest {
     @Order(2)
     fun getFavRecipes()
     {
-        favouritesController?.getFavRecipes("test2", 1, 10)
-        userDao?.getFavFromUser("test2",1,10)?.forEach {
-            if(it is PublicRecipe)
-            {
-                Assertions.assertTrue(recipes.contains(it.recipeId))
-            }
+        favouritesController?.getFavRecipes("test2", 1, 10)?.forEach {
+            Assertions.assertTrue(recipes.contains(it.id))
         }
     }
 
@@ -95,6 +91,7 @@ class FavouriteTest {
         else {
             Assertions.fail()
         }
+        deleteRecipes()
     }
 
     private fun createRecipes() {
@@ -104,6 +101,13 @@ class FavouriteTest {
             val id = recipeDao?.getLastId()
             if(id != null)
                 recipes.add(id)
+        }
+    }
+
+    private fun deleteRecipes()
+    {
+        recipes.forEach {
+            recipeDao?.deleteById(it)
         }
     }
 }
