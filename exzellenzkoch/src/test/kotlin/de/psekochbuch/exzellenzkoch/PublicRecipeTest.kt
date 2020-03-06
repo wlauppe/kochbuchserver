@@ -54,11 +54,11 @@ class PublicRecipeTest {
         private var id: Int = 0
 
         private val newRec = PublicRecipeDto(0, "Salat", "#Zutaten:\n200 g Eisbergsalat\n50 g Tomaten\n70 g Mais","Man wirft alles in eine Schüssel", "", 12,12,"test2","2019-12-31 00:00:00",4,0,
-                listOf(IngredientChapterDto(0,"Zutaten", listOf(IngredientDto(0,"Eisbergsalat", 200.0,"g"), IngredientDto(0,"Tomaten", 50.0, "g"), IngredientDto(0, "Mais", 70.0,"g")))), listOf(RecipeTagDto("Salat")))
+                listOf(IngredientChapterDto(0,"Zutaten", listOf(IngredientDto(0,"Eisbergsalat", 200.0,"g"), IngredientDto(0,"Tomaten", 50.0, "g"), IngredientDto(0, "Mais", 70.0,"g")))), listOf(RecipeTagDto("Salat"), RecipeTagDto("gesund")))
 
         private val searchRecipes = ArrayList<PublicRecipeDto>()
 
-        private val dynRecipes = ArrayList<Int>()
+        private var dynRecipes = ArrayList<Int>()
     }
 
 
@@ -144,6 +144,11 @@ class PublicRecipeTest {
     @Order(5)
     fun searchTitle()
     {
+        for(i in 0..3)
+        {
+            val rec = publicRecipeController?.addRecipe(newRec)
+            if(rec != null) dynRecipes.add(rec.id)
+        }
         val result : MvcResult = mvc?.perform(MockMvcRequestBuilders.get("/api/recipes?title=Test&page=1&readCount=10"))?.andReturn() as MvcResult
 
         var recipes = asJsonArrayObject(result.response.contentAsString, Array<PublicRecipeDto>::class.java)
@@ -197,10 +202,59 @@ class PublicRecipeTest {
 
     @Test
     @Order(7)
+    fun searchTag()
+    {
+        val result : MvcResult = mvc?.perform(MockMvcRequestBuilders.get("/api/recipes?title=&tags=Salat&tags=gesund&ingredients=&page=1&readCount=10"))?.andReturn() as MvcResult
+
+        var recipes = asJsonArrayObject(result.response.contentAsString, Array<PublicRecipeDto>::class.java)
+
+        if(recipes is Array<*>)
+        {
+            recipes = recipes.toList()
+            recipes.forEach {recipeItem ->
+                if(recipeItem is PublicRecipeDto)
+                {
+                    val recipeTag = recipeItem.recipeTag
+                    if(recipeTag != null)
+                    {
+                        if(recipeTag.contains(RecipeTagDto("Salat")) || recipeTag.contains(RecipeTagDto("gesund")))
+                        {
+                            Assertions.assertTrue(true)
+                        } else
+                        {
+                            Assertions.fail()
+                        }
+                    }
+                }
+            }
+        }
+        dynRecipes.forEach {
+            recipedao?.deleteById(it)
+        }
+        dynRecipes = ArrayList<Int>()
+    }
+
+    @Test
+    @Order(8)
     fun getRecipesFromUser()
     {
         createRecipes()
-        
+
+        val result : MvcResult = mvc?.perform(MockMvcRequestBuilders.get("/api/recipes/user/test2"))?.andReturn() as MvcResult
+
+        var recipes = asJsonArrayObject(result.response.contentAsString, Array<PublicRecipeDto>::class.java)
+        if(recipes is Array<*>)
+        {
+            recipes = recipes.toList()
+            recipes.forEach {recipe->
+                if(recipe is PublicRecipeDto)
+                {
+                    Assertions.assertEquals("test2",recipe.userId)
+                }
+            }
+        }
+        deleteRecipes()
+
     }
 
     private fun createRecipes() {
@@ -210,6 +264,13 @@ class PublicRecipeTest {
             val id = recipedao?.getLastId()
             if(id != null)
                 dynRecipes.add(id)
+        }
+    }
+
+    private fun deleteRecipes()
+    {
+        dynRecipes.forEach {
+            recipedao?.deleteById(it)
         }
     }
 
