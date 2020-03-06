@@ -45,6 +45,6 @@ interface UserDao : JpaRepository<User?,String?>, UserRepository
     @Query("INSERT INTO favourites (recipe_Id, user_Id) VALUES ((:recipeId), (:userId))", nativeQuery = true)
     fun addFavourite(recipeId:Int, userId: String)
 
-    @Query("DELETE FROM favourites WHERE WHERE user_Id = (:userId) AND recipe_Id = (:recipeId)", nativeQuery = true)
+    @Query("DELETE FROM favourites WHERE user_Id = (:userId) AND recipe_Id = (:recipeId)", nativeQuery = true)
     fun deleteFavourite(recipeId: Int, userId: String)
 }
