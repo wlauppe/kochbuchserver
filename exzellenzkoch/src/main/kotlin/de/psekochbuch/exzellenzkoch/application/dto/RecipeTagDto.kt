@@ -9,3 +9,13 @@ data class RecipeTagDto(
          */
         var name:String
 )
+{
+        override fun equals(other: Any?): Boolean {
+                if(other is RecipeTagDto)
+                {
+                        if(other.name != name) return false
+                        return true
+                }
+                return false
+        }
+}

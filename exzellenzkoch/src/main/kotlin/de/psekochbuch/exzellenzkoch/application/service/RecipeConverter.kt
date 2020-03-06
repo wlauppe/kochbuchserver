@@ -88,33 +88,6 @@ object RecipeConverter
         return convertedIngredients
     }
 
-    /**
-     * Converts public recipes to DTOs
-     * @param
-     */
-    fun convertDtoToRecipe(recipe:PublicRecipeDto, userDao: UserDao) : PublicRecipe?
-    {
-        val userId:String
-        if(recipe.userId == null)
-        {
-            return null
-        }
-        else
-        {
-            userId = recipe.userId
-        }
-        val user = userDao.findById(userId).get()
-        return PublicRecipe(recipe.id,recipe.title,recipe.ingredientsText,recipe.preparationDescription, recipe.picture,recipe.cookingTime,recipe.preparationTime, user,  convertStringToDate(recipe.creationDate), false, recipe.portions, null)
-    }
-
-    fun convertDtoToIngredient(saveChapter: IngredientChapter?, ingredient: List<IngredientDto>?) :List<IngredientAmount> {
-        val convertedIngredient: MutableList<IngredientAmount> = ArrayList()
-        ingredient?.forEach {
-            convertedIngredient.add(IngredientAmount(saveChapter,it.nameIngredient,it.amount,it.unit))
-        }
-        return convertedIngredient
-    }
-
     fun convertDateToString(date: Date):String
         {
             val dateFormat: DateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")

@@ -33,7 +33,7 @@ class FileController : FileApi {
     }
 
     override fun updateImage(file: MultipartFile, imageName: String, userId: String): FileDto? {
-        return service?.updateImage(file, userId, imageName)
+        return service?.updateImage(file, imageName, userId)
     }
 
     override fun deleteImage(imageName: String, userId: String) :FileDto? {
