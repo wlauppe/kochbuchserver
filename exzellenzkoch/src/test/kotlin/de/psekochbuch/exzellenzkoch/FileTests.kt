@@ -48,7 +48,7 @@ class FileTests {
     private val mvc :MockMvc? = null
 
     val testFileOne = "test/testImages/test.jpg"
-    val testFileTwo = "test/testImages/wolke.jpg"
+    val testFileTwo = "test/testImages/pizza_fresca.jpg"
 
     companion object {
         var url = ""
@@ -133,7 +133,9 @@ class FileTests {
         var file = File("test")
         if(!file.exists()) file.mkdir()
         file = File("test/test.jpg")
-        file.writeBytes(result?.body?.inputStream?.readAllBytes()!!)
+        val input = result?.body?.inputStream
+        file.writeBytes(input?.readAllBytes()!!)
+        input.close()
         val test = File(testFileOne)
         Assertions.assertTrue(compareImage(file,test))
         //file.writeBytes(result.response.contentAsByteArray)
@@ -146,16 +148,24 @@ class FileTests {
         val fileDto = fileController?.updateImage(createMutlipartFile(testFileTwo), "test.jpg", "test2" )
         val fileTwo = File(testFileTwo)
         Assertions.assertNotNull(fileDto?.filePath)
-        Assertions.assertTrue(compareImage(fileTwo,File(fileDto!!.filePath)))
+        val path =  fileDto?.filePath?.substring("api/".length, fileDto.filePath.length)
+        if(path != null) {
+            Assertions.assertTrue(compareImage(fileTwo, File(path)))
+        }
+        else {
+            Assertions.fail()
+        }
     }
 
     @Test
     @Order(5)
     fun deleteImage()
     {
-        fileController?.deleteImage("test.jpg", "test2")
-        val file = File("images/test2/Test.jpg")
+        fileController?.deleteImage("pizza_fresca.jpg", "test2")
+        val file = File("images/test2/test.jpg")
         Assertions.assertFalse(file.exists())
+
+        File("test/test.jpg").delete()
     }
 
     private fun createMutlipartFile(path:String): MultipartFile
