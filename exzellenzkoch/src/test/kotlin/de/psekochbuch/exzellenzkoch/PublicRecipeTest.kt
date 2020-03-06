@@ -26,6 +26,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.MvcResult
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
+import java.util.*
+import kotlin.collections.ArrayList
 
 
 //@TestPropertySource(locations = ["classpath:test.properties"])
@@ -55,6 +57,8 @@ class PublicRecipeTest {
                 listOf(IngredientChapterDto(0,"Zutaten", listOf(IngredientDto(0,"Eisbergsalat", 200.0,"g"), IngredientDto(0,"Tomaten", 50.0, "g"), IngredientDto(0, "Mais", 70.0,"g")))), listOf(RecipeTagDto("Salat")))
 
         private val searchRecipes = ArrayList<PublicRecipeDto>()
+
+        private val dynRecipes = ArrayList<Int>()
     }
 
 
@@ -188,6 +192,24 @@ class PublicRecipeTest {
                     Assertions.assertTrue(isCorrect)
                 }
             }
+        }
+    }
+
+    @Test
+    @Order(7)
+    fun getRecipesFromUser()
+    {
+        createRecipes()
+        
+    }
+
+    private fun createRecipes() {
+        for(i in 0..3)
+        {
+            recipedao?.addRecipe("Salat", "#Zutaten\n10 g Salat", "Man macht was", "",3,3,"test2", Date(System.currentTimeMillis()),4)
+            val id = recipedao?.getLastId()
+            if(id != null)
+                dynRecipes.add(id)
         }
     }
 

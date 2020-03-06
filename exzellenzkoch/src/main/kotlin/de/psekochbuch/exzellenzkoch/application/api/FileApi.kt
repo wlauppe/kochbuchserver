@@ -37,7 +37,7 @@ interface FileApi {
      * PUT-Request to update an image
      * The URL ends with api/images
      * @param file Picture to update
-     * @param imageName Name form the picture
+     * @param imageName Name from the picture
      * @param userId The id of the user, which uploaded the picture
      * @return The Online-Url of the File
      */

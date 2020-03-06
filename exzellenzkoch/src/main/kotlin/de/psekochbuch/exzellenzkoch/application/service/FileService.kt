@@ -78,7 +78,8 @@ class FileService {
     /**
      * Update the image of the recipe
      * @param file The new image
-     * @param recipeId The id of the recipe
+     * @param imageName The imageName of the file
+     * @param userId The id of the user
      * @return The URL of the image
      */
     fun updateImage(file: MultipartFile, imageName: String, userId: String) :FileDto?
