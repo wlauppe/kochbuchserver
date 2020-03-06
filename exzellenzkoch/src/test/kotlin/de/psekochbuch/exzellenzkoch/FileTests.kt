@@ -17,16 +17,14 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.MvcResult
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
-import org.springframework.test.web.servlet.result.MockMvcResultHandlers
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
-import org.springframework.test.web.servlet.setup.DefaultMockMvcBuilder
-import org.springframework.test.web.servlet.setup.MockMvcBuilders
-import org.springframework.web.context.WebApplicationContext
 import org.springframework.web.multipart.MultipartFile
+import java.awt.image.BufferedImage
+import java.awt.image.DataBuffer
 import java.io.File
 import java.io.IOException
 import java.nio.file.Files
 import java.nio.file.Paths
+import javax.imageio.ImageIO
 
 
 @ExtendWith(SpringExtension::class)
@@ -46,6 +44,16 @@ class FileTests {
     @Autowired
     val fileController:FileController? = null
 
+    @Autowired
+    private val mvc :MockMvc? = null
+
+    val testFileOne = "test/testImages/test.jpg"
+    val testFileTwo = "test/testImages/wolke.jpg"
+
+    companion object {
+        var url = ""
+    }
+
     @BeforeEach
     fun configureSecurity() {
         val user = FirebaseAuth.getInstance().getUser("ZVQtHQgMTYf1ZrbLQqQJbgFnZm03")
@@ -58,7 +66,7 @@ class FileTests {
     @Order(1)
     fun addImage()
     {
-        val file = File("test.jpg")
+        val file = File(testFileOne)
         val bo = file.exists()
 
         var content :ByteArray? = null
@@ -71,6 +79,8 @@ class FileTests {
         val multipartFile = MockMultipartFile(file.name,file.name,MediaType.parseMediaType("*/*").type, content)
 
         val fileDto = fileController?.addImage(multipartFile)
+        val path = fileDto?.filePath
+        if(path != null) url = path
         if(fileDto?.filePath != null) {
             val editPath = fileDto.filePath.substring("api/".length, fileDto.filePath.length)
             Assertions.assertTrue(File(editPath).exists())
@@ -89,7 +99,7 @@ class FileTests {
     @Order(2)
     fun addImageWithSameName()
     {
-        val file = File("test.jpg")
+        val file = File(testFileOne)
         val bo = file.exists()
 
         var content :ByteArray? = null
@@ -108,17 +118,84 @@ class FileTests {
             var editPath = fileDto.filePath.substring("api/".length, fileDto.filePath.length)
             val createdFile = File(editPath)
             Assertions.assertTrue(createdFile.exists())
-            editPath = createdFile.nameWithoutExtension.substring("Test".length, createdFile.name.length)
+            editPath = createdFile.nameWithoutExtension.substring("Test".length, createdFile.nameWithoutExtension.length)
             Assertions.assertNotEquals("",editPath)
+            createdFile.delete()
         }
-
     }
 
     @Test
     @Order(3)
     fun getImage()
     {
-        
+        val result = fileController?.getImage("test.jpg", "test2")
+        //val result : MvcResult = mvc?.perform(MockMvcRequestBuilders.get(url))?.andReturn() as MvcResult
+        var file = File("test")
+        if(!file.exists()) file.mkdir()
+        file = File("test/test.jpg")
+        file.writeBytes(result?.body?.inputStream?.readAllBytes()!!)
+        val test = File(testFileOne)
+        Assertions.assertTrue(compareImage(file,test))
+        //file.writeBytes(result.response.contentAsByteArray)
     }
 
+    @Test
+    @Order(4)
+    fun updateImage()
+    {
+        val fileDto = fileController?.updateImage(createMutlipartFile(testFileTwo), "test.jpg", "test2" )
+        val fileTwo = File(testFileTwo)
+        Assertions.assertNotNull(fileDto?.filePath)
+        Assertions.assertTrue(compareImage(fileTwo,File(fileDto!!.filePath)))
+    }
+
+    @Test
+    @Order(5)
+    fun deleteImage()
+    {
+        fileController?.deleteImage("test.jpg", "test2")
+        val file = File("images/test2/Test.jpg")
+        Assertions.assertFalse(file.exists())
+    }
+
+    private fun createMutlipartFile(path:String): MultipartFile
+    {
+        val file = File(path)
+        val bo = file.exists()
+
+        var content :ByteArray? = null
+        try {
+            content = Files.readAllBytes(Paths.get(file.absolutePath))
+        } catch (ex : IOException)
+        {
+
+        }
+        return MockMultipartFile(file.name,file.name,MediaType.parseMediaType("*/*").type, content)
+    }
+
+    private fun compareImage(fileA: File?, fileB: File?): Boolean {
+        return try {
+            // take buffer data from botm image files //
+            val biA: BufferedImage = ImageIO.read(fileA)
+            val dbA: DataBuffer = biA.data.dataBuffer
+            val sizeA: Int = dbA.size
+            val biB: BufferedImage = ImageIO.read(fileB)
+            val dbB: DataBuffer = biB.data.dataBuffer
+            val sizeB: Int = dbB.size
+            // compare data-buffer objects //
+            if (sizeA == sizeB) {
+                for (i in 0 until sizeA) {
+                    if (dbA.getElem(i) != dbB.getElem(i)) {
+                        return false
+                    }
+                }
+                true
+            } else {
+                false
+            }
+        } catch (e: Exception) {
+            println("Failed to compare image files ...")
+            false
+        }
+    }
 }
