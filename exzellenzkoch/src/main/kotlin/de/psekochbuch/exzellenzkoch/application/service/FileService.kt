@@ -88,13 +88,18 @@ class FileService {
         if(FirebaseAuth.getInstance().getUser(auth.principal as String).displayName == userId) {
 
             val localPath ="images/$userId/$imageName"
+            val newLocalPath = "images/$userId/" + file.name
 
             val localFile = File(localPath)
 
-            if (localFile.exists()) localFile.delete()
+            if (localFile.exists())
+            {
+                localFile.delete()
+            }
 
-            localFile.writeBytes(file.bytes)
-            return FileDto("api/$localPath")
+            val newFIle = File(newLocalPath)
+            newFIle.writeBytes(file.bytes)
+            return FileDto("api/$newLocalPath")
         }
         return null
     }
@@ -115,15 +120,6 @@ class FileService {
             return FileDto("")
         }
         return null
-    }
-
-    /**
-     * Convert the Public-URL in a local path
-     * @param imageUrl The of the image
-     * @return The converted path
-     */
-    private fun getLocalPathFromImage(imageUrl: String): String {
-        return imageUrl.substring(0, "api/".length)
     }
 
 }
