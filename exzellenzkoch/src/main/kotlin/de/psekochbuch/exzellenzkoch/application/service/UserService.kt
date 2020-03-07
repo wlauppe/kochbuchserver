@@ -53,7 +53,7 @@ class UserService {
     fun updateUser(user: UserDto, userId: String) {
         val fireAuth : FirebaseAuthentication = SecurityContextHolder.getContext().authentication as FirebaseAuthentication
         if(userDao?.getUserIdByEmail(FirebaseAuth.getInstance().getUser(fireAuth.principal as String).email!!) == userId) {
-            userDao?.updateUser(user.userId, userId, user.description)
+            userDao?.updateUser(user.userId, userId, user.description,user.imageUrl)
 
             if(userId != user.userId) {
                 updateFirebaseDisplayName(fireAuth.principal as String, user.userId)
@@ -64,9 +64,14 @@ class UserService {
 
     fun deleteUser(userId: String) {
         val fireAuth : FirebaseAuthentication = SecurityContextHolder.getContext().authentication as FirebaseAuthentication
-        if (userDao?.getUserIdByEmail(FirebaseAuth.getInstance().getUser(fireAuth.principal as String).email!!) == userId)
+        val displayName = FirebaseAuth.getInstance().getUser(fireAuth.principal as String).displayName
+        if (userDao?.getUserIdByEmail(FirebaseAuth.getInstance().getUser(fireAuth.principal as String).email!!) == userId || userDao?.isAdmin(displayName) == 1)
         {
+            val user = userDao?.findById(userId)?.orElseThrow {ResourceNotFoundException("User", "userId", userId)}
+            val firebaseUser = FirebaseAuth.getInstance().getUserByEmail(user?.email)
             userDao?.deleteById(userId)
+            FirebaseAuth.getInstance().deleteUser(firebaseUser.uid)
+
         }
     }
 
