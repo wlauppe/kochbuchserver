@@ -133,16 +133,19 @@ class UserTest {
     fun updateUser()
     {
         val desc = "Test Desc"
-        userController?.updateUser(UserDto("NeuTest","", desc), "TestUser")
+        userController?.updateUser(UserDto("NeuTest","Test", desc), "TestUser")
         val user = userDao?.findById("NeuTest")
         Assertions.assertNotNull(user)
         Assertions.assertEquals(desc,user?.get()?.description)
         Assertions.assertEquals("NeuTest", user?.get()?.userId)
+        Assertions.assertEquals("Test", user?.get()?.imageUrl)
     }
 
     @Test
     @Order(7)
     fun deleteUser() {
+        FirebaseAuth.getInstance().createUser()
+
         userController?.deleteUser("NeuTest")
         updateFirebaseDisplayName("")
 
