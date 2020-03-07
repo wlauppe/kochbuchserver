@@ -32,6 +32,11 @@ data class User(
         @NotBlank
         val email:String,
 
+        /**
+         * Url of the image
+         */
+        var imageUrl:String,
+
        //@ManyToMany(cascade = [ CascadeType.ALL ], mappedBy = "members", targetEntity = Group::class)
        //var groups:List<Group>?,
 

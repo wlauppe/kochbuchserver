@@ -19,8 +19,8 @@ interface UserDao : JpaRepository<User?,String?>, UserRepository
     @Query("INSERT INTO user (user_Id, email, description, mark_As_Evil) VALUES ((:userId), (:email), (:description), 0)", nativeQuery = true)
     fun createUser(userId:String, email: String, description:String)
 
-    @Query("UPDATE user SET user_Id = (:newUserId), user.description = (:description) WHERE user.user_Id = (:oldUserId) ", nativeQuery = true)
-    fun updateUser(newUserId:String, oldUserId:String, description: String)
+    @Query("UPDATE user SET user_Id = (:newUserId), user.description = (:description), image_Url=(:image) WHERE user.user_Id = (:oldUserId) ", nativeQuery = true)
+    fun updateUser(newUserId:String, oldUserId:String, description: String, image:String)
 
     /**
      * Set the report value of an user
