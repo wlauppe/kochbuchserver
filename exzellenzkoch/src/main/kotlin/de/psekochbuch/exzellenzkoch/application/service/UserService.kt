@@ -80,7 +80,7 @@ class UserService {
         var user :UserDto? = UserDto("", "", "")
         val userDb =  userDao?.findById(userId)?.orElseThrow { ResourceNotFoundException("User", "id", userId) }
         if (userDb != null) {
-            user = UserDto(userDb.userId, "", userDb.description)
+            user = UserDto(userDb.userId, userDb.imageUrl, userDb.description)
         }
         return user
     }
