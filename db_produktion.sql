@@ -2,7 +2,7 @@
 -- Host:                         193.196.38.185
 -- Server Version:               10.3.18-MariaDB-0+deb10u1 - Debian 10
 -- Server Betriebssystem:        debian-linux-gnu
--- HeidiSQL Version:             10.1.0.5464
+-- HeidiSQL Version:             10.2.0.5599
 -- --------------------------------------------------------
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
@@ -223,7 +223,7 @@ CREATE TABLE IF NOT EXISTS `recipe_tag` (
   CONSTRAINT `FK_recipeTag_publicrecipe` FOREIGN KEY (`recipe_Id`) REFERENCES `public_recipe` (`recipe_Id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- Exportiere Daten aus Tabelle pseDb.recipe_tag: ~3 rows (ungefähr)
+-- Exportiere Daten aus Tabelle pseDb.recipe_tag: ~2 rows (ungefähr)
 /*!40000 ALTER TABLE `recipe_tag` DISABLE KEYS */;
 INSERT INTO `recipe_tag` (`tag_Id`, `recipe_Id`) VALUES
 	('fleisch', 3),
@@ -261,6 +261,7 @@ CREATE TABLE IF NOT EXISTS `user` (
   `user_Id` varchar(50) NOT NULL,
   `email` varchar(50) NOT NULL,
   `description` varchar(255) NOT NULL,
+  `image_Url` varchar(255) DEFAULT '',
   `mark_As_Evil` tinyint(1) DEFAULT NULL,
   `isAdmin` tinyint(1) DEFAULT 0,
   PRIMARY KEY (`user_Id`)
@@ -268,13 +269,13 @@ CREATE TABLE IF NOT EXISTS `user` (
 
 -- Exportiere Daten aus Tabelle pseDb.user: ~6 rows (ungefähr)
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
-INSERT INTO `user` (`user_Id`, `email`, `description`, `mark_As_Evil`, `isAdmin`) VALUES
-	('admin', 'admin@admin.de', '', 0, 1),
-	('Dummy', 'whmeier@gmx.de', '', 0, 0),
-	('KochDummy', 'nutzerohneid@id.de', '', 0, 0),
-	('Max', 'max.musterman@muster.de', 'Ich bin ein Muster', 0, 0),
-	('Test', 'test@test.de', '', 0, 0),
-	('test2', 'test3@test.de', '', 0, 0);
+INSERT INTO `user` (`user_Id`, `email`, `description`, `image_Url`, `mark_As_Evil`, `isAdmin`) VALUES
+	('admin', 'admin@admin.de', '', '', 0, 1),
+	('Dummy', 'whmeier@gmx.de', '', '', 0, 0),
+	('KochDummy', 'nutzerohneid@id.de', '', '', 0, 0),
+	('Max', 'max.musterman@muster.de', 'Ich bin ein Muster', '', 0, 0),
+	('Test', 'test@test.de', '', '', 0, 0),
+	('test2', 'test3@test.de', 'Test', 'Test', 0, 0);
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 
 -- Exportiere Struktur von Tabelle pseDb.user_group
