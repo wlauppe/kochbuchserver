@@ -139,17 +139,21 @@ class UserTest {
         Assertions.assertEquals(desc,user?.get()?.description)
         Assertions.assertEquals("NeuTest", user?.get()?.userId)
         Assertions.assertEquals("Test", user?.get()?.imageUrl)
+
+        userDao?.deleteById("NeuTest")
+
     }
 
     @Test
     @Order(7)
     fun deleteUser() {
-        FirebaseAuth.getInstance().createUser()
+        updateFirebaseDisplayName("test2")
+        createUser()
 
-        userController?.deleteUser("NeuTest")
+        userController?.deleteUser("autoTestUser")
         updateFirebaseDisplayName("")
 
-            val result: MvcResult = mvc?.perform(MockMvcRequestBuilders.get("/api/users/TestUser"))?.andReturn() as MvcResult
+            val result: MvcResult = mvc?.perform(MockMvcRequestBuilders.get("/api/users/autoTestUser"))?.andReturn() as MvcResult
         Assertions.assertEquals(HttpStatus.SC_NOT_FOUND, result.response.status)
 
     }
@@ -182,6 +186,23 @@ class UserTest {
 
         //userDao?.deleteFavourite(4, "admin")
         val t = ""
+    }
+
+    private fun createUser() :String
+    {
+        val request = UserRecord.CreateRequest()
+        request.setEmail("autoTestUser@test.de")
+        request.setPassword("dafsasdf")
+        request.setDisplayName("autoTestUser")
+        request.setDisabled(false)
+
+        val user = FirebaseAuth.getInstance().createUser(request)
+        userDao?.createUser("autoTestUser", "autoTestUser@test.de", "")
+
+        val authenticationToken: Authentication = FirebaseAuthentication(user.uid, FirebaseTokenHolder(null, user), null)
+        SecurityContextHolder.getContext().authentication = authenticationToken
+
+        return user.uid
     }
 
     private fun updateFirebaseDisplayName(userId:String)
