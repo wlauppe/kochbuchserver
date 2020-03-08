@@ -36,7 +36,7 @@ class PublicRecipeRepositoryImpl : PublicRecipeRepository
 
         if(creationDate != null){
             query += if(hasCriteriaSet) "AND p.creation_Date = (:creationDate) " else " p.creation_Date = (:creationDate) "}
-        query += "GROUP BY recipe_id ORDER BY creation_Date ASC LIMIT " + ((pageNumber -1)* count) + "," + count + ";"
+        query += "GROUP BY recipe_id ORDER BY creation_Date DESC LIMIT " + ((pageNumber -1)* count) + "," + count + ";"
 
         val nativeQuery = entityManager?.createNativeQuery(query, PublicRecipe::class.java)
 
